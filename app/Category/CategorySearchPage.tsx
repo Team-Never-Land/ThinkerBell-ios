@@ -2,11 +2,14 @@ import {
   dummyCategory,
   dummyCategorySearch,
 } from "@/assets/data/dummyCategory";
+import CategoryBackButton from "@/components/category/CategoryBackButton";
 import CategoryButton from "@/components/category/CategoryButton";
+import CategoryEmpty from "@/components/category/CategoryEmpty";
 import DropdownMenu from "@/components/category/DropdownMenu";
 import Pagination from "@/components/category/Pagination";
 import CategoryHeader from "@/components/header/CategoryHeader";
 import { Color, Font } from "@/constants/Theme";
+import { TCategoryKey, TCategoryList } from "@/types/category";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { ScrollView, View, Text, Pressable } from "react-native";
@@ -16,31 +19,6 @@ type CategorySearchRouteProp = RouteProp<
   { CategorySearch: { categoryText: string; categoryKey: TCategoryKey } },
   "CategorySearch"
 >;
-
-export type TCategoryKey =
-  | "NormalNotice"
-  | "AcademicNotice"
-  | "EventNotice"
-  | "ScholarshipNotice"
-  | "CareerNotice"
-  | "StudentActsNotice"
-  | "BiddingNotice"
-  | "SafetyNotice"
-  | "RevisionNotice"
-  | "DormitoryNotice"
-  | "DormitoryEntryNotice"
-  | "LibraryNotice"
-  | "TeachingNotice";
-
-export type TCategoryList = {
-  id: number;
-  pubDate: string;
-  title: string;
-  url: string;
-  marked: boolean;
-  important?: boolean;
-  campus?: string;
-};
 
 const CategorySearchPage = ({ navigation }: { navigation: any }) => {
   const route = useRoute<CategorySearchRouteProp>();
@@ -108,15 +86,15 @@ const CategorySearchPage = ({ navigation }: { navigation: any }) => {
       autoHide: true,
     });
 
-    setList((prevList) =>
-      prevList.map((item) =>
-        item.id === id ? { ...item, marked: !item.marked } : item
-      )
-    );
+    updateList(id);
   };
 
   //즐겨찾기 삭제
   const removeFromFavorites = (id: number) => {
+    updateList(id);
+  };
+
+  const updateList = (id: number) => {
     setList((prevList) =>
       prevList.map((item) =>
         item.id === id ? { ...item, marked: !item.marked } : item
@@ -214,59 +192,20 @@ const CategorySearchPage = ({ navigation }: { navigation: any }) => {
             );
           })}
           {isSearch ? (
-            <View
-              style={{
-                alignItems: "center",
-                marginTop: 75,
+            <CategoryBackButton
+              onPress={() => {
+                setIsSearch(false);
+                setSearch("");
+                setList(dummyCategory.items);
+                setPage(0);
               }}
-            >
-              <Pressable
-                onPress={() => {
-                  setIsSearch(false);
-                  setSearch("");
-                  setList(dummyCategory.items);
-                  setPage(0);
-                }}
-                style={{
-                  borderRadius: 3,
-                  borderWidth: 1,
-                  borderColor: Color.red.gray[500],
-                  width: 67,
-                  height: 25,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <Text
-                  style={{
-                    ...Font.Category[14],
-                    color: Color.red.gray[500],
-                  }}
-                >
-                  뒤로가기
-                </Text>
-              </Pressable>
-            </View>
+            />
           ) : (
             <Pagination page={page} setPage={setPage} totalSize={totalSize} />
           )}
         </ScrollView>
       ) : (
-        <View
-          style={{
-            marginTop: 208,
-          }}
-        >
-          <Text
-            style={{
-              ...Font.Paragraph.Medium,
-              color: Color.contents.contentSecondary,
-              textAlign: "center",
-            }}
-          >
-            ‘{searchText}’이(가) 포함된 공지사항을{"\n"}찾을 수 없습니다.
-          </Text>
-        </View>
+        <CategoryEmpty searchText={searchText} />
       )}
     </View>
   );

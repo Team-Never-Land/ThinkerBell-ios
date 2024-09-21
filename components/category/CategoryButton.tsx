@@ -4,7 +4,7 @@ import ClippingOnIcon from "../../assets/images/icon/Clipping/Clipping-On.svg";
 import ClippingOffIcon from "../../assets/images/icon/Clipping/Clipping-Off.svg";
 import { Color, Font } from "@/constants/Theme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { TCategoryList } from "@/app/category/CategorySearchPage";
+import { TCategoryList } from "@/types/category";
 
 export default function CategoryButton({
   item,

@@ -1,4 +1,4 @@
-import { TCategoryKey, TCategoryList } from "@/app/category/CategorySearchPage";
+import { TCategorySearch } from "@/types/category";
 
 export const dummyCategory = {
   items: [
@@ -220,11 +220,7 @@ export const dummyCategory = {
   totalItems: 304,
 };
 
-type DummyCategorySearch = {
-  [key in TCategoryKey]?: TCategoryList[];
-};
-
-export const dummyCategorySearch: DummyCategorySearch = {
+export const dummyCategorySearch: TCategorySearch = {
   AcademicNotice: [
     {
       id: 17,
