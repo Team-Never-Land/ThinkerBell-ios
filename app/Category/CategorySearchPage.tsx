@@ -1,5 +1,6 @@
 import { dummyCategory } from "@/assets/data/dummyCategory";
 import CategoryButton from "@/components/category/CategoryButton";
+import DropdownMenu from "@/components/category/DropdownMenu";
 import Pagination from "@/components/category/Pagination";
 import CategoryHeader from "@/components/header/CategoryHeader";
 import { Color } from "@/constants/Theme";
@@ -19,6 +20,7 @@ const CategorySearchPage = ({ navigation }: { navigation: any }) => {
   const [page, setPage] = useState(0);
   const [totalSize, setTotalSize] = useState(0);
   const [list, setList] = useState(dummyCategory);
+  const [selectedCampus, setSelectedCampus] = useState("전체");
 
   useEffect(() => {
     setTotalSize(Math.ceil((list.totalItems - list.size) / 10));
@@ -86,6 +88,25 @@ const CategorySearchPage = ({ navigation }: { navigation: any }) => {
         onSearch={onSearch}
       />
       <ScrollView showsVerticalScrollIndicator={false}>
+        {(categoryKey === "DormitoryNotice" ||
+          categoryKey === "DormitoryEntryNotice") && (
+          <View
+            style={{
+              borderColor: Color.red.gray[700],
+              borderBottomWidth: 1,
+              alignItems: "flex-end",
+              paddingTop: 11,
+              paddingRight: 19,
+              height: 58,
+              zIndex: 10,
+            }}
+          >
+            <DropdownMenu
+              selectedCampus={selectedCampus}
+              setSelectedCampus={setSelectedCampus}
+            />
+          </View>
+        )}
         {list.items.map((item, index) => {
           return (
             <CategoryButton
