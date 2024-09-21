@@ -10,10 +10,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function CategoryHeader({
   navigation,
   title,
+  search,
+  setSearch,
   onSearch,
 }: {
   navigation: any;
   title: string;
+  search: string;
+  setSearch: React.Dispatch<React.SetStateAction<string>>;
   onSearch: (search: string) => void;
 }) {
   const { top } = useSafeAreaInsets();
@@ -74,7 +78,11 @@ export default function CategoryHeader({
           >
             {title}
           </Text>
-          <SearchBar onSearch={onSearch} />
+          <SearchBar
+            search={search}
+            setSearch={setSearch}
+            onSearch={onSearch}
+          />
         </View>
       </View>
     </>

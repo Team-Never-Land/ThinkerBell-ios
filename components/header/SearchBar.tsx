@@ -4,11 +4,14 @@ import SearchIcon from "../../assets/images/icon/Topbar/Search.svg";
 import { Color, Font } from "@/constants/Theme";
 
 export default function SearchBar({
+  search,
+  setSearch,
   onSearch,
 }: {
+  search: string;
+  setSearch: React.Dispatch<React.SetStateAction<string>>;
   onSearch: (search: string) => void;
 }) {
-  const [search, setSearch] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   const isValidSearch = (text: string) => {

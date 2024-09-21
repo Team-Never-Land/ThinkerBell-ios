@@ -1,3 +1,5 @@
+import { TCategoryKey, TCategoryList } from "@/app/category/CategorySearchPage";
+
 export const dummyCategory = {
   items: [
     {
@@ -216,4 +218,132 @@ export const dummyCategory = {
   page: 0,
   size: 26,
   totalItems: 304,
+};
+
+type DummyCategorySearch = {
+  [key in TCategoryKey]?: TCategoryList[];
+};
+
+export const dummyCategorySearch: DummyCategorySearch = {
+  AcademicNotice: [
+    {
+      id: 17,
+      pubDate: "2024-07-25",
+      title: "2024학년도 2학기 창업대체학점(창업현장실습)과 창업휴학 접수 안내",
+      url: "https://www.mju.ac.kr/bbs/mjukr/143/213750/artclView.do",
+      marked: false,
+      important: false,
+    },
+    {
+      id: 32,
+      pubDate: "2024-05-28",
+      title: "2024학년도 하계 방학 중 창업대체학점(창업실습) 신청 안내",
+      url: "https://www.mju.ac.kr/bbs/mjukr/143/212130/artclView.do",
+      marked: false,
+      important: false,
+    },
+  ],
+  CareerNotice: [
+    {
+      id: 344,
+      pubDate: "2024-09-11",
+      title:
+        "[도봉구 청년창업센터] 노드크루 - 웹개발자 취/창업을 위한 교육과정 모집",
+      url: "https://www.mju.ac.kr/bbs/mjukr/146/215016/artclView.do",
+      marked: false,
+    },
+  ],
+  BiddingNotice: [
+    {
+      id: 19,
+      pubDate: "2024-05-08",
+      title:
+        "★변경공지★[입찰공고] 명지대학교 경기 불황기 새로운 창업기회 포착을 위한 창업 아이디어",
+      url: "https://www.mju.ac.kr/bbs/mjukr/147/211598/artclView.do",
+      marked: false,
+    },
+  ],
+  DormitoryNotice: [
+    {
+      id: 70,
+      pubDate: "2024-06-17",
+      title:
+        "명지대학교 취창업지원처 창업교육센터 전담인력(비전임교원-특임교수) 초빙 공고",
+      url: "https://www.mju.ac.kr/bbs/mjukr/141/212776/artclView.do",
+      marked: false,
+      important: false,
+    },
+    {
+      id: 105,
+      pubDate: "2024-05-23",
+      title:
+        "[산학협력단] 「2024학년도 경기남부대학 TMC 공동 학생 기술창업 경진대회」공고 안내",
+      url: "https://www.mju.ac.kr/bbs/mjukr/141/212019/artclView.do",
+      marked: false,
+      important: false,
+    },
+    {
+      id: 185,
+      pubDate: "2024-03-22",
+      title: "2024학년도 1학기 창업동아리 선정 안내",
+      url: "https://www.mju.ac.kr/bbs/mjukr/141/210351/artclView.do",
+      marked: false,
+      important: false,
+    },
+    {
+      id: 235,
+      pubDate: "2024-02-29",
+      title: "[창업교육센터] 2024학년도 1학기 창업동아리 모집 안내",
+      url: "https://www.mju.ac.kr/bbs/mjukr/141/208823/artclView.do",
+      marked: false,
+      important: false,
+    },
+    {
+      id: 258,
+      pubDate: "2024-08-26",
+      title: "[창업교육센터] 2024학년도 2학기 창업동아리 모집 안내",
+      url: "https://www.mju.ac.kr/bbs/mjukr/141/214335/artclView.do",
+      marked: false,
+      important: false,
+    },
+    {
+      id: 265,
+      pubDate: "2024-08-28",
+      title: "2024학년도 2학기 교내 창업아이디어 경진대회 개최 안내",
+      url: "https://www.mju.ac.kr/bbs/mjukr/141/214425/artclView.do",
+      marked: false,
+      important: false,
+    },
+    {
+      id: 305,
+      pubDate: "2024-09-19",
+      title: "2024학년도 2학기 창업동아리 선정 안내",
+      url: "https://www.mju.ac.kr/bbs/mjukr/141/215206/artclView.do",
+      marked: false,
+      important: false,
+    },
+  ],
+  StudentActsNotice: [
+    {
+      id: 64,
+      pubDate: "2024-07-10",
+      title: "2024년 산림분야 딥테크·빅데이터 활용 창업경진대회",
+      url: "https://www.mju.ac.kr/bbs/mjukr/853/213391/artclView.do",
+      marked: false,
+    },
+    {
+      id: 117,
+      pubDate: "2024-06-10",
+      title: "도봉구 청년창업센터 서포터즈 모집",
+      url: "https://www.mju.ac.kr/bbs/mjukr/853/212567/artclView.do",
+      marked: false,
+    },
+    {
+      id: 252,
+      pubDate: "2024-03-29",
+      title: "2024년 보건의료빅데이터 활용 창업경진대회",
+      url: "https://www.mju.ac.kr/bbs/mjukr/853/210621/artclView.do",
+      marked: false,
+    },
+  ],
 };
