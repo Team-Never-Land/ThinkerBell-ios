@@ -1,0 +1,15 @@
+export const initialCategory = [
+  { key: "NormalNotice", text: "일반공지" },
+  { key: "AcademicNotice", text: "학사공지" },
+  { key: "EventNotice", text: "행사공지" },
+  { key: "ScholarshipNotice", text: "장학/학자금공지" },
+  { key: "CareerNotice", text: "진로/취업/창업공지" },
+  { key: "StudentActsNotice", text: "학생활동공지" },
+  { key: "BiddingNotice", text: "입찰공지" },
+  { key: "SafetyNotice", text: "대학안전공지" },
+  { key: "RevisionNotice", text: "학칙개정 사전공고" },
+  { key: "DormitoryNotice", text: "[생활관] 공지사항" },
+  { key: "DormitoryEntryNotice", text: "[생활관] 입퇴사 공지사항" },
+  { key: "LibraryNotice", text: "[도서관] 공지사항" },
+  { key: "TeachingNotice", text: "[교직] 공지사항" },
+];
