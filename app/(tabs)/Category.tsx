@@ -2,8 +2,8 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import { Color } from "@/constants/Theme";
-import CategoryListPage from "../Category/CategoryListPage";
-import CategorySearchPage from "../Category/CategorySearchPage";
+import CategoryListPage from "../category/CategoryListPage";
+import CategorySearchPage from "../category/CategorySearchPage";
 
 const CategoryStack = createNativeStackNavigator();
 
@@ -29,9 +29,9 @@ export default function Category({
           borderTopLeftRadius: 27,
           borderTopRightRadius: 27,
           position: "absolute",
-          shadowColor: "rgba(186, 186, 186, 0.10)",
+          shadowColor: "#bababa",
           shadowOffset: { width: 0, height: -2 },
-          shadowOpacity: 0.1,
+          shadowOpacity: 0.15,
           shadowRadius: 5,
           elevation: 2,
           display: "flex",

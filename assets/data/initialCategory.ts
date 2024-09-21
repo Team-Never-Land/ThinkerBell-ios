@@ -1,0 +1,15 @@
+export const initialCategory = [
+  { key: "1", text: "일반공지" },
+  { key: "2", text: "학사공지" },
+  { key: "3", text: "행사공지" },
+  { key: "4", text: "장학/학자금공지" },
+  { key: "5", text: "진로/취업/창업공지" },
+  { key: "6", text: "학생활동공지" },
+  { key: "7", text: "입찰공지" },
+  { key: "8", text: "대학안전공지" },
+  { key: "9", text: "학칙개정 사전공고" },
+  { key: "10", text: "[생활관] 공지사항" },
+  { key: "11", text: "[생활관] 입퇴사 공지사항" },
+  { key: "12", text: "[도서관] 공지사항" },
+  { key: "13", text: "[교직] 공지사항" },
+];

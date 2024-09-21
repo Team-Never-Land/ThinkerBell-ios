@@ -105,4 +105,10 @@ export const Font = {
       lineHeight: 12.003 * 1.6,
     },
   },
+  Category: {
+    14: {
+      fontFamily: "Pretendard500",
+      fontSize: 14,
+    },
+  },
 };
