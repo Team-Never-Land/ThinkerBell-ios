@@ -37,7 +37,7 @@ const CategoryListPage = ({ navigation }: { navigation: any }) => {
     try {
       await AsyncStorage.setItem(storageKey, JSON.stringify(newData));
     } catch (error) {
-      console.error("Failed to save category order", error);
+      console.error(error);
     }
   };
 
@@ -48,6 +48,7 @@ const CategoryListPage = ({ navigation }: { navigation: any }) => {
     return (
       <CategoryBox
         navigation={navigation}
+        textKey={item.key}
         text={item.text}
         onLongPress={drag}
       />

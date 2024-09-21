@@ -8,8 +8,8 @@ export const Color = {
   BLUE: "#00368A",
   WHITE: "#FFFFFF",
   BLACK: "#000000",
-  LIGHTGRAY: "DEDEDE",
-  RED: "E11900",
+  LIGHTGRAY: "#DEDEDE",
+  RED: "#E11900",
   red: {
     gray: {
       200: "#C4C4C4",
@@ -21,6 +21,9 @@ export const Color = {
     contentSecondary: "#6B6B6B",
   },
   category: "#E4E9EF",
+  Grey: {
+    1: "#acacad",
+  },
 };
 
 export const Font = {
@@ -77,6 +80,10 @@ export const Font = {
       fontSize: 16,
       lineHeight: 16 * 1.5,
     },
+    MediumInput: {
+      fontFamily: "Pretendard600",
+      fontSize: 16,
+    },
     Small: {
       fontFamily: "Pretendard600",
       fontSize: 12.003,
@@ -109,6 +116,11 @@ export const Font = {
     14: {
       fontFamily: "Pretendard500",
       fontSize: 14,
+    },
+    11: {
+      fontFamily: "Pretendard500",
+      fontSize: 11,
+      lineHeight: 11 * 1.5,
     },
   },
 };

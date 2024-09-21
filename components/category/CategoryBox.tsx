@@ -5,16 +5,23 @@ import { Color, Font } from "@/constants/Theme";
 
 export default function CategoryBox({
   navigation,
+  textKey,
   text,
   onLongPress,
 }: {
   navigation: any;
+  textKey: string;
   text: string;
   onLongPress: () => void;
 }) {
   return (
     <Pressable
-      onPress={() => navigation.navigate("CategorySearch")}
+      onPress={() =>
+        navigation.navigate("CategorySearch", {
+          categoryText: text,
+          categoryKey: textKey,
+        })
+      }
       style={{
         flexDirection: "row",
         justifyContent: "space-between",
