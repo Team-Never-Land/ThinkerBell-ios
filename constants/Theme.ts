@@ -124,4 +124,10 @@ export const Font = {
       lineHeight: 11 * 1.5,
     },
   },
+  Pretendard300: {
+    11: {
+      fontFamily: "Pretendard300",
+      fontSize: 11,
+    },
+  },
 };

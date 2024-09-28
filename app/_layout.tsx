@@ -35,6 +35,7 @@ export default function RootLayout() {
     Pretendard600: require("../assets/fonts/Pretendard-SemiBold.otf"),
     Pretendard500: require("../assets/fonts/Pretendard-Medium.otf"),
     Pretendard400: require("../assets/fonts/Pretendard-Regular.otf"),
+    Pretendard300: require("../assets/fonts/Pretendard-Light.otf"),
   });
 
   useEffect(() => {

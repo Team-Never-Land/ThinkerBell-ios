@@ -12,7 +12,7 @@ import { Color, Font } from "@/constants/Theme";
 import { TCategoryKey, TCategoryList } from "@/types/category";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { ScrollView, View, Text, Pressable } from "react-native";
+import { ScrollView, View, Text } from "react-native";
 import Toast from "react-native-toast-message";
 
 type CategorySearchRouteProp = RouteProp<
