@@ -54,10 +54,11 @@ export default function CategoryButton({
       style={{
         flexDirection: "row",
         justifyContent: "space-between",
+        flex: 1,
         paddingLeft: 22,
-        height: 49,
+        paddingVertical: 12,
         alignItems: "center",
-        backgroundColor: Color.WHITE,
+        backgroundColor: item.important ? Color.category : Color.WHITE,
         borderColor: Color.red.gray[700],
         borderBottomWidth: 1,
       }}
@@ -69,8 +70,6 @@ export default function CategoryButton({
           flexShrink: 1,
           paddingRight: 10,
         }}
-        numberOfLines={1}
-        ellipsizeMode="tail"
       >
         {item.important && "[중요]  "}
         {item.title}
