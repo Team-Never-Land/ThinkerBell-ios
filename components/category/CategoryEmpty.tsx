@@ -6,7 +6,9 @@ export default function CategoryEmpty({ searchText }: { searchText: string }) {
   return (
     <View
       style={{
-        marginTop: 208,
+        flex: 1,
+        justifyContent: "center",
+        marginBottom: 50,
       }}
     >
       <Text

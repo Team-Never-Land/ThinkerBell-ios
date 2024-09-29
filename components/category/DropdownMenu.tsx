@@ -73,10 +73,12 @@ export default function DropdownMenu({
                   }}
                   style={{
                     width: 79,
-                    height: 29,
+                    height: 35,
                     alignItems: "center",
                     justifyContent: "center",
                     backgroundColor: Color.WHITE,
+                    borderColor: Color.red.gray[200],
+                    borderBottomWidth: index === 0 ? 0.5 : 0,
                   }}
                 >
                   <Text

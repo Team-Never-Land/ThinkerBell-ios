@@ -2,16 +2,15 @@ import { Color } from "@/constants/Theme";
 import React, { useEffect, useState } from "react";
 import { View, ScrollView } from "react-native";
 import { TCategoryKey, TCategorySearch } from "@/types/category";
-import CategoryButton from "@/components/category/CategoryButton";
+import CategoryItem from "@/components/category/CategoryItem";
 import { dummyFavoritesNotice } from "@/assets/data/dummyFavorites";
-import Toast from "react-native-toast-message";
 import FavoritesNoticeHeader from "@/components/header/FavoritesNoticeHeader";
 
 const FavoritesNoticePage = () => {
-  const [noticelist, setNoticeList] = useState<TCategorySearch>({});
-  const [categoryKeyList, setCategoryKeyList] = useState<TCategoryKey[]>([]);
+  const [noticelist, setNoticeList] = useState<TCategorySearch>({}); //즐겨찾기한 공지사항 목록
+  const [categoryKeyList, setCategoryKeyList] = useState<TCategoryKey[]>([]); //카테고리 목록
   const [selectedCategoryKey, setSelectedCategoryKey] =
-    useState<TCategoryKey | null>(null);
+    useState<TCategoryKey | null>(null); //선택한 카테고리
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -24,43 +23,6 @@ const FavoritesNoticePage = () => {
     }
     setIsLoading(false);
   }, []);
-
-  //즐겨찾기
-  const onMarkedPress = (id: number, marked: boolean) => {
-    if (marked) {
-      // 이미 즐겨찾기된 경우 삭제
-      removeFromFavorites(id);
-    } else {
-      // 즐겨찾기가 아닌 경우 추가
-      addToFavorites(id);
-    }
-  };
-
-  //즐겨찾기 추가
-  const addToFavorites = (id: number) => {
-    Toast.show({
-      type: "success",
-      text1: "즐겨찾기 되었습니다!",
-      position: "bottom",
-      visibilityTime: 1500,
-      autoHide: true,
-    });
-
-    updateList(id);
-  };
-
-  //즐겨찾기 삭제
-  const removeFromFavorites = (id: number) => {
-    Toast.show({
-      type: "success",
-      text1: "삭제 되었습니다.",
-      position: "bottom",
-      visibilityTime: 1500,
-      autoHide: true,
-    });
-
-    updateList(id);
-  };
 
   const updateList = (id: number) => {
     setNoticeList((prevList) => {
@@ -97,11 +59,11 @@ const FavoritesNoticePage = () => {
               {selectedCategoryKey &&
                 noticelist[selectedCategoryKey] &&
                 noticelist[selectedCategoryKey].map((item, index) => (
-                  <CategoryButton
+                  <CategoryItem
                     key={index}
                     item={item}
                     categoryKey={selectedCategoryKey}
-                    onMarkedPress={onMarkedPress}
+                    updateList={updateList}
                   />
                 ))}
             </View>

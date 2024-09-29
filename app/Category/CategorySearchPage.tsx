@@ -3,7 +3,7 @@ import {
   dummyCategorySearch,
 } from "@/assets/data/dummyCategory";
 import CategoryBackButton from "@/components/category/CategoryBackButton";
-import CategoryButton from "@/components/category/CategoryButton";
+import CategoryItem from "@/components/category/CategoryItem";
 import CategoryEmpty from "@/components/category/CategoryEmpty";
 import DropdownMenu from "@/components/category/DropdownMenu";
 import Pagination from "@/components/category/Pagination";
@@ -13,7 +13,6 @@ import { TCategoryKey, TCategoryList } from "@/types/category";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { ScrollView, View, Text } from "react-native";
-import Toast from "react-native-toast-message";
 
 type CategorySearchRouteProp = RouteProp<
   { CategorySearch: { categoryText: string; categoryKey: TCategoryKey } },
@@ -35,7 +34,7 @@ const CategorySearchPage = ({ navigation }: { navigation: any }) => {
   const [isSearch, setIsSearch] = useState(false);
   const [search, setSearch] = useState("");
   const [searchText, setSearchText] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     setList(dummyCategory.items);
@@ -44,11 +43,11 @@ const CategorySearchPage = ({ navigation }: { navigation: any }) => {
       size: dummyCategory.size,
       totalItems: dummyCategory.totalItems,
     });
-    setIsLoading(true);
+    setIsLoading(false);
   }, [page]);
 
   useEffect(() => {
-    if (isLoading) {
+    if (!isLoading) {
       setTotalSize(Math.ceil((pageInfo.totalItems - pageInfo.size) / 10));
     }
   }, [isLoading]);
@@ -63,35 +62,6 @@ const CategorySearchPage = ({ navigation }: { navigation: any }) => {
     } else {
       setList([]);
     }
-  };
-
-  //즐겨찾기
-  const onMarkedPress = (id: number, marked: boolean) => {
-    if (marked) {
-      // 이미 즐겨찾기인 경우 삭제
-      removeFromFavorites(id);
-    } else {
-      // 즐겨찾기가 아닌 경우 추가
-      addToFavorites(id);
-    }
-  };
-
-  //즐겨찾기 추가
-  const addToFavorites = (id: number) => {
-    Toast.show({
-      type: "success",
-      text1: "즐겨찾기 되었습니다!",
-      position: "bottom",
-      visibilityTime: 1500,
-      autoHide: true,
-    });
-
-    updateList(id);
-  };
-
-  //즐겨찾기 삭제
-  const removeFromFavorites = (id: number) => {
-    updateList(id);
   };
 
   const updateList = (id: number) => {
@@ -141,7 +111,7 @@ const CategorySearchPage = ({ navigation }: { navigation: any }) => {
               >
                 <Text
                   style={{
-                    ...Font.Category[14],
+                    ...Font.Pretendard500[14],
                     color: Color.contents.contentSecondary,
                   }}
                 >
@@ -183,11 +153,11 @@ const CategorySearchPage = ({ navigation }: { navigation: any }) => {
           )}
           {list.map((item, index) => {
             return (
-              <CategoryButton
+              <CategoryItem
                 key={index}
                 item={item}
                 categoryKey={categoryKey}
-                onMarkedPress={onMarkedPress}
+                updateList={updateList}
               />
             );
           })}

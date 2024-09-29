@@ -1,22 +1,40 @@
 import { Color } from "@/constants/Theme";
 import React, { useEffect, useState } from "react";
 import { View, ScrollView } from "react-native";
-import { dummyFavoritesRecentNotice } from "@/assets/data/dummyFavorites";
-import { TFavoritesRecentNoticeList } from "@/types/favorites";
+import {
+  dummyFavoritesRecentNotice,
+  dummyRecentFavorites,
+} from "@/assets/data/dummyFavorites";
+import { TFavoritesList, TFavoritesRecentNoticeList } from "@/types/favorites";
 import FavoritesNoticeItem from "@/components/favorites/FavoritesNoticeItem";
 import FavoritesHeader from "@/components/header/FavoritesHeader";
 import FavoritesEmpty from "@/components/favorites/FavoritesEmpty";
 import FavoritesHead from "@/components/favorites/FavoritesHead";
+import FavoritesScheduleItem from "@/components/favorites/FavoritesScheduleItem";
 
 const FavoritesPage = ({ navigation }: { navigation: any }) => {
-  const [favoritelist, setFavoriteList] = useState([]);
+  const [scheduleList, setScheduleList] = useState<TFavoritesList[]>([]); //최근 즐겨찾기한 학사일정 목록
   const [noticelist, setNoticeList] = useState<TFavoritesRecentNoticeList[]>(
     []
-  );
+  ); //최근 즐겨찾기한 공지사항 목록
 
   useEffect(() => {
+    const updatedFavorites = dummyRecentFavorites.map((item) => ({
+      ...item,
+      marked: true,
+    }));
+
+    setScheduleList(updatedFavorites);
     setNoticeList(dummyFavoritesRecentNotice);
   }, []);
+
+  const updateList = (id: number) => {
+    setScheduleList((prevList) =>
+      prevList.map((item) =>
+        item.id === id ? { ...item, marked: !item.marked } : item
+      )
+    );
+  };
 
   return (
     <View
@@ -29,12 +47,18 @@ const FavoritesPage = ({ navigation }: { navigation: any }) => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <FavoritesHead
           text="학사일정"
-          isDisabled={favoritelist.length === 0}
-          onPress={() => navigation.navigate("home")}
+          isDisabled={scheduleList.length === 0}
+          onPress={() => navigation.navigate("FavoritesSchedule")}
         />
-        {favoritelist.length > 0 ? (
-          favoritelist.map((item, index) => {
-            return <FavoritesNoticeItem key={index} item={item} />;
+        {scheduleList.length > 0 ? (
+          scheduleList.map((item, index) => {
+            return (
+              <FavoritesScheduleItem
+                key={index}
+                item={item}
+                updateList={updateList}
+              />
+            );
           })
         ) : (
           <FavoritesEmpty text="학사일정" />

@@ -17,11 +17,11 @@ export default function FavoritesNoticeItem({
     <Pressable
       onPress={() => Linking.openURL(item.url)}
       style={{
+        flex: 1,
         flexDirection: "row",
         justifyContent: "space-between",
-        paddingLeft: 22,
-        paddingVertical: 12,
         alignItems: "center",
+        paddingLeft: 22,
         backgroundColor: Color.WHITE,
         borderColor: Color.red.gray[700],
         borderBottomWidth: 1,
@@ -29,10 +29,11 @@ export default function FavoritesNoticeItem({
     >
       <Text
         style={{
-          ...Font.Category[14],
+          ...Font.Pretendard500[14],
           color: Color.BLACK,
           flexShrink: 1,
           paddingRight: 20,
+          paddingVertical: 12,
         }}
       >
         [{categoryText}]{"  "}
