@@ -5,15 +5,16 @@ import ClippingOffIcon from "../../assets/images/icon/Clipping/Clipping-Off.svg"
 import { Color, Font } from "@/constants/Theme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TCategoryList } from "@/types/category";
+import { onMarkedPress } from "@/utils/favorites";
 
-export default function CategoryButton({
+export default function CategoryItem({
   item,
   categoryKey,
-  onMarkedPress,
+  updateList,
 }: {
   item: TCategoryList;
   categoryKey: string;
-  onMarkedPress: (id: number, marked: boolean) => void;
+  updateList: (id: number) => void;
 }) {
   const [isViewed, setIsViewed] = useState(false);
 
@@ -52,12 +53,11 @@ export default function CategoryButton({
         Linking.openURL(item.url);
       }}
       style={{
+        flex: 1,
         flexDirection: "row",
         justifyContent: "space-between",
-        flex: 1,
-        paddingLeft: 22,
-        paddingVertical: 12,
         alignItems: "center",
+        paddingLeft: 22,
         backgroundColor: item.important ? Color.category : Color.WHITE,
         borderColor: Color.red.gray[700],
         borderBottomWidth: 1,
@@ -65,10 +65,11 @@ export default function CategoryButton({
     >
       <Text
         style={{
-          ...Font.Category[14],
+          ...Font.Pretendard500[14],
           color: isViewed ? Color.contents.contentSecondary : Color.BLACK,
           flexShrink: 1,
-          paddingRight: 10,
+          paddingRight: 20,
+          paddingVertical: 12,
         }}
       >
         {item.important && "[중요]  "}
@@ -76,8 +77,8 @@ export default function CategoryButton({
       </Text>
       <View
         style={{
-          flexDirection: "row",
           height: "100%",
+          flexDirection: "row",
           alignItems: "center",
         }}
       >
@@ -93,13 +94,13 @@ export default function CategoryButton({
         <Pressable
           style={{
             paddingLeft: 13,
-            paddingRight: 16,
+            paddingRight: 20,
             height: "100%",
             justifyContent: "center",
           }}
           onPress={(event) => {
             event.preventDefault();
-            onMarkedPress(item.id, item.marked);
+            onMarkedPress(item.id, categoryKey, item.marked, updateList);
           }}
         >
           {item.marked ? <ClippingOnIcon /> : <ClippingOffIcon />}

@@ -28,7 +28,7 @@ export default function CategoryBackButton({
       >
         <Text
           style={{
-            ...Font.Category[14],
+            ...Font.Pretendard500[14],
             color: Color.red.gray[500],
           }}
         >

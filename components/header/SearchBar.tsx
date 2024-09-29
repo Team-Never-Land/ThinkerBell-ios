@@ -75,7 +75,7 @@ export default function SearchBar({
       </View>
       <Text
         style={{
-          ...Font.Category[11],
+          ...Font.Pretendard500[11],
           color: Color.RED,
           height: 17,
           marginBottom: 11,

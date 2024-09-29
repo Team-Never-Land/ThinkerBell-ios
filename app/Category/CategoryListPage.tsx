@@ -10,7 +10,7 @@ import { initialCategory } from "@/assets/data/initialCategory";
 
 const CategoryListPage = ({ navigation }: { navigation: any }) => {
   const [data, setData] = useState<{ key: string; text: string }[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const storageKey = "@category_order";
 
   useEffect(() => {
@@ -26,7 +26,7 @@ const CategoryListPage = ({ navigation }: { navigation: any }) => {
         console.error(error);
         setData(initialCategory);
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
@@ -78,7 +78,7 @@ const CategoryListPage = ({ navigation }: { navigation: any }) => {
           카테고리
         </Text>
       </View>
-      {loading ? (
+      {isLoading ? (
         <ActivityIndicator
           size="large"
           color={Color.BLACK}
