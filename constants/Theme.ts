@@ -115,7 +115,13 @@ export const Font = {
       lineHeight: 12.003 * 1.6,
     },
   },
-  Category: {
+  Pretendard300: {
+    11: {
+      fontFamily: "Pretendard300",
+      fontSize: 11,
+    },
+  },
+  Pretendard500: {
     14: {
       fontFamily: "Pretendard500",
       fontSize: 14,
@@ -129,6 +135,12 @@ export const Font = {
       fontFamily: "Pretendard300",
       fontSize: 11,
       lineHeight: 13,
+    },
+  },
+  Pretendard600: {
+    14: {
+      fontFamily: "Pretendard600",
+      fontSize: 14,
     },
   },
 };

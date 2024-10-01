@@ -35,7 +35,7 @@ export default function CategoryBox({
     >
       <Text
         style={{
-          ...Font.Category[14],
+          ...Font.Pretendard500[14],
           color: Color.BLACK,
           flexShrink: 1,
         }}
