@@ -13,6 +13,7 @@ export const Color = {
   red: {
     gray: {
       200: "#C4C4C4",
+      300: "#A6A6A6",
       400: "#898989",
       500: "#6b6b6b",
       700: "#404040",
@@ -24,6 +25,7 @@ export const Color = {
   category: "#E4E9EF",
   Grey: {
     1: "#acacad",
+    2: "#838383",
   },
 };
 
@@ -122,6 +124,11 @@ export const Font = {
       fontFamily: "Pretendard500",
       fontSize: 11,
       lineHeight: 11 * 1.5,
+    },
+    13: {
+      fontFamily: "Pretendard300",
+      fontSize: 11,
+      lineHeight: 13,
     },
   },
 };

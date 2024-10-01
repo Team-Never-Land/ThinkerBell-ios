@@ -238,6 +238,30 @@ export const dummyCategorySearch: TCategorySearch = {
       marked: false,
       important: false,
     },
+    {
+      id: 30,
+      pubDate: "2024-10-28",
+      title: "2024학년도 하계 방학 중 창업대체학점(창업실습) 신청 안내",
+      url: "https://www.mju.ac.kr/bbs/mjukr/143/212130/artclView.do",
+      marked: false,
+      important: false,
+    },
+    {
+      id: 88,
+      pubDate: "2024-10-18",
+      title: "2024학년도 하계 방학 중 창업대체학점(창업실습) 신청 안내",
+      url: "https://www.mju.ac.kr/bbs/mjukr/143/212130/artclView.do",
+      marked: false,
+      important: false,
+    },
+    {
+      id: 39,
+      pubDate: "2024-10-21",
+      title: "2024학년도 하계 방학 중 창업대체학점(창업실습) 신청 안내",
+      url: "https://www.mju.ac.kr/bbs/mjukr/143/212130/artclView.do",
+      marked: false,
+      important: false,
+    },
   ],
   CareerNotice: [
     {
@@ -339,6 +363,37 @@ export const dummyCategorySearch: TCategorySearch = {
       pubDate: "2024-03-29",
       title: "2024년 보건의료빅데이터 활용 창업경진대회",
       url: "https://www.mju.ac.kr/bbs/mjukr/853/210621/artclView.do",
+      marked: false,
+    },
+  ],
+  NormalNotice: [
+    {
+      id: 141,
+      pubDate: "2024-09-30",
+      title: "[혁신사업-ABI-X사업단] 2024학년도 앱/웹서비스 개발 공모전 공고",
+      url: "https://mju.ac.kr/bbs/mjukr/141/215534/artclView.do",
+      marked: false,
+    },
+    {
+      id: 527,
+      pubDate: "2024-09-30",
+      title: "[2024 선배와의 취업멘토링 참여학생 모집(10월)",
+      url: "https://www.mju.ac.kr/bbs/mjukr/141/215527/artclView.do",
+      marked: false,
+    },
+    {
+      id: 519,
+      pubDate: "2024-09-30",
+      title: "명지대학교 재학생 대상 2024년 온라인 폭력예방교육 안내",
+      url: "https://www.mju.ac.kr/bbs/mjukr/141/215519/artclView.do",
+      marked: false,
+    },
+    {
+      id: 471,
+      pubDate: "2024-09-27",
+      title:
+        "명지대학교 학생상담센터(대학혁신지원사업) 2024년 명지인 연결고리 프로그램 참가자 모집",
+      url: "https://www.mju.ac.kr/bbs/mjukr/141/215471/artclView.do",
       marked: false,
     },
   ],
