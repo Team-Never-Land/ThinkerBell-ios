@@ -158,27 +158,31 @@ export default function Calendars() {
             direction === "left" ? (
               <LeftArrowIcon
                 style={{ marginLeft: 70 }}
-                fill={Color.contents.contentSecondary}
+                color={Color.contents.contentSecondary}
               />
             ) : (
               <RightArrowIcon
                 style={{ marginRight: 70 }}
-                fill={Color.contents.contentSecondary}
+                color={Color.contents.contentSecondary}
               />
             )
           }
         />
-        {/* <View
-          style={{
-            height: 1, // 줄 두께
-            backgroundColor: "#E1E1E1", // 줄 색상
-            bottom: 263, // 줄과 다른 요소 사이의 간격
-            width: 312,
-            alignSelf: "center",
-          }}
-        /> */}
       </View>
-      <AcademicList notices={filteredNotices} />
+      <AcademicList
+        notices={filteredNotices}
+        categoryKey="학사공지"
+        updateList={(id) => {
+          // 공지사항 상태 업데이트
+          setFilteredNotices((prev) =>
+            prev.map((notice) =>
+              notice.id === id
+                ? { ...notice, read: true } // 공지를 읽었을 때 read를 true로 변경
+                : notice
+            )
+          );
+        }}
+      />
     </View>
   );
 }

@@ -21,6 +21,7 @@ export type TCategoryList = {
   marked: boolean;
   important?: boolean;
   campus?: string;
+  read: boolean;
 };
 
 export type TCategorySearch = {

@@ -178,7 +178,7 @@ export default function HomeHeader({
                 navigation.navigate("CategoryList");
               }} // 카테고리 페이지로 이동
             >
-              <MenuIcon height={24} width={24} />
+              <MenuIcon fill={Color.Grey[1]} />
             </Pressable>
           </ScrollView>
         </View>
