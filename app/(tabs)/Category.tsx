@@ -2,8 +2,8 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import { Color } from "@/constants/Theme";
-import CategoryListPage from "../category/CategoryListPage";
-import CategorySearchPage from "../category/CategorySearchPage";
+import CategoryListPage from "../Category/CategoryListPage";
+import CategorySearchPage from "../Category/CategorySearchPage";
 
 const CategoryStack = createNativeStackNavigator();
 

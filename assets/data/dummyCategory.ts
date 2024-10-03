@@ -9,6 +9,7 @@ export const dummyCategory = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/214806/artclView.do",
       marked: false,
       important: true,
+      read: false,
     },
     {
       id: 287,
@@ -18,6 +19,7 @@ export const dummyCategory = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/214790/artclView.do",
       marked: false,
       important: true,
+      read: false,
     },
     {
       id: 274,
@@ -26,6 +28,7 @@ export const dummyCategory = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/214594/artclView.do",
       marked: false,
       important: true,
+      read: false,
     },
     {
       id: 272,
@@ -34,6 +37,7 @@ export const dummyCategory = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/214494/artclView.do",
       marked: true,
       important: true,
+      read: false,
     },
     {
       id: 273,
@@ -42,6 +46,7 @@ export const dummyCategory = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/214511/artclView.do",
       marked: false,
       important: true,
+      read: false,
     },
     {
       id: 268,
@@ -50,6 +55,7 @@ export const dummyCategory = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/214452/artclView.do",
       marked: false,
       important: true,
+      read: false,
     },
     {
       id: 269,
@@ -58,6 +64,7 @@ export const dummyCategory = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/214452/artclView.do",
       marked: false,
       important: true,
+      read: false,
     },
     {
       id: 261,
@@ -66,6 +73,7 @@ export const dummyCategory = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/214384/artclView.do",
       marked: false,
       important: true,
+      read: false,
     },
     {
       id: 1,
@@ -74,6 +82,7 @@ export const dummyCategory = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/214105/artclView.do",
       marked: false,
       important: true,
+      read: false,
     },
     {
       id: 2,
@@ -82,6 +91,7 @@ export const dummyCategory = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/213741/artclView.do",
       marked: false,
       important: true,
+      read: false,
     },
     {
       id: 3,
@@ -90,6 +100,7 @@ export const dummyCategory = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/213726/artclView.do",
       marked: false,
       important: true,
+      read: false,
     },
     {
       id: 4,
@@ -98,6 +109,7 @@ export const dummyCategory = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/213725/artclView.do",
       marked: false,
       important: true,
+      read: false,
     },
     {
       id: 5,
@@ -107,6 +119,7 @@ export const dummyCategory = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/212209/artclView.do",
       marked: false,
       important: true,
+      read: false,
     },
     {
       id: 6,
@@ -115,6 +128,7 @@ export const dummyCategory = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/211348/artclView.do",
       marked: false,
       important: true,
+      read: false,
     },
     {
       id: 7,
@@ -123,6 +137,7 @@ export const dummyCategory = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/208825/artclView.do",
       marked: false,
       important: true,
+      read: false,
     },
     {
       id: 8,
@@ -131,6 +146,7 @@ export const dummyCategory = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/190823/artclView.do",
       marked: false,
       important: true,
+      read: false,
     },
     {
       id: 305,
@@ -139,6 +155,7 @@ export const dummyCategory = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/215206/artclView.do",
       marked: false,
       important: false,
+      read: false,
     },
     {
       id: 303,
@@ -147,6 +164,7 @@ export const dummyCategory = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/215098/artclView.do",
       marked: false,
       important: false,
+      read: false,
     },
     {
       id: 304,
@@ -155,6 +173,7 @@ export const dummyCategory = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/215112/artclView.do",
       marked: false,
       important: false,
+      read: false,
     },
     {
       id: 300,
@@ -164,6 +183,7 @@ export const dummyCategory = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/215018/artclView.do",
       marked: false,
       important: false,
+      read: false,
     },
     {
       id: 301,
@@ -172,6 +192,7 @@ export const dummyCategory = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/215017/artclView.do",
       marked: false,
       important: false,
+      read: false,
     },
     {
       id: 302,
@@ -180,6 +201,7 @@ export const dummyCategory = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/215023/artclView.do",
       marked: false,
       important: false,
+      read: false,
     },
     {
       id: 298,
@@ -188,6 +210,7 @@ export const dummyCategory = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/214981/artclView.do",
       marked: false,
       important: false,
+      read: false,
     },
     {
       id: 297,
@@ -196,6 +219,7 @@ export const dummyCategory = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/214967/artclView.do",
       marked: false,
       important: false,
+      read: false,
     },
     {
       id: 296,
@@ -204,6 +228,7 @@ export const dummyCategory = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/214954/artclView.do",
       marked: false,
       important: false,
+      read: false,
     },
     {
       id: 299,
@@ -213,6 +238,7 @@ export const dummyCategory = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/214986/artclView.do",
       marked: false,
       important: false,
+      read: false,
     },
   ],
   page: 0,
@@ -229,6 +255,7 @@ export const dummyCategorySearch: TCategorySearch = {
       url: "https://www.mju.ac.kr/bbs/mjukr/143/213750/artclView.do",
       marked: false,
       important: false,
+      read: false,
     },
     {
       id: 32,
@@ -237,6 +264,34 @@ export const dummyCategorySearch: TCategorySearch = {
       url: "https://www.mju.ac.kr/bbs/mjukr/143/212130/artclView.do",
       marked: false,
       important: false,
+      read: false,
+    },
+    {
+      id: 30,
+      pubDate: "2024-10-28",
+      title: "2024학년도 하계 방학 중 창업대체학점(창업실습) 신청 안내",
+      url: "https://www.mju.ac.kr/bbs/mjukr/143/212130/artclView.do",
+      marked: false,
+      important: false,
+      read: false,
+    },
+    {
+      id: 88,
+      pubDate: "2024-10-18",
+      title: "2024학년도 하계 방학 중 창업대체학점(창업실습) 신청 안내",
+      url: "https://www.mju.ac.kr/bbs/mjukr/143/212130/artclView.do",
+      marked: false,
+      important: false,
+      read: false,
+    },
+    {
+      id: 39,
+      pubDate: "2024-10-21",
+      title: "2024학년도 하계 방학 중 창업대체학점(창업실습) 신청 안내",
+      url: "https://www.mju.ac.kr/bbs/mjukr/143/212130/artclView.do",
+      marked: false,
+      important: false,
+      read: false,
     },
   ],
   CareerNotice: [
@@ -247,6 +302,7 @@ export const dummyCategorySearch: TCategorySearch = {
         "[도봉구 청년창업센터] 노드크루 - 웹개발자 취/창업을 위한 교육과정 모집",
       url: "https://www.mju.ac.kr/bbs/mjukr/146/215016/artclView.do",
       marked: false,
+      read: false,
     },
   ],
   BiddingNotice: [
@@ -257,6 +313,27 @@ export const dummyCategorySearch: TCategorySearch = {
         "★변경공지★[입찰공고] 명지대학교 경기 불황기 새로운 창업기회 포착을 위한 창업 아이디어",
       url: "https://www.mju.ac.kr/bbs/mjukr/147/211598/artclView.do",
       marked: false,
+      read: false,
+    },
+    {
+      id: 72,
+      pubDate: "2024-06-17",
+      title:
+        "명지대학교 취창업지원처 창업교육센터 전담인력(비전임교원-특임교수) 초빙 공고",
+      url: "https://www.mju.ac.kr/bbs/mjukr/141/212776/artclView.do",
+      marked: false,
+      important: false,
+      read: false,
+    },
+    {
+      id: 10800,
+      pubDate: "2024-05-24",
+      title:
+        "[산학협력단] 「2024학년도 경기남부대학 TMC 공동 학생 기술창업 경진대회」 공모전 안내",
+      url: "https://www.mju.ac.kr/bbs/mjukr/141/212019/artclView.do",
+      marked: false,
+      important: false,
+      read: false,
     },
   ],
   DormitoryNotice: [
@@ -268,6 +345,7 @@ export const dummyCategorySearch: TCategorySearch = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/212776/artclView.do",
       marked: false,
       important: false,
+      read: false,
     },
     {
       id: 105,
@@ -277,6 +355,7 @@ export const dummyCategorySearch: TCategorySearch = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/212019/artclView.do",
       marked: false,
       important: false,
+      read: false,
     },
     {
       id: 185,
@@ -285,6 +364,7 @@ export const dummyCategorySearch: TCategorySearch = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/210351/artclView.do",
       marked: false,
       important: false,
+      read: false,
     },
     {
       id: 235,
@@ -293,6 +373,7 @@ export const dummyCategorySearch: TCategorySearch = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/208823/artclView.do",
       marked: false,
       important: false,
+      read: false,
     },
     {
       id: 258,
@@ -301,6 +382,7 @@ export const dummyCategorySearch: TCategorySearch = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/214335/artclView.do",
       marked: false,
       important: false,
+      read: false,
     },
     {
       id: 265,
@@ -309,14 +391,16 @@ export const dummyCategorySearch: TCategorySearch = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/214425/artclView.do",
       marked: false,
       important: false,
+      read: false,
     },
     {
-      id: 305,
+      id: 3060,
       pubDate: "2024-09-19",
-      title: "2024학년도 2학기 창업동아리 선정 안내",
+      title: "2024학년도 2학기 명지동아리 선정 안내",
       url: "https://www.mju.ac.kr/bbs/mjukr/141/215206/artclView.do",
       marked: false,
       important: false,
+      read: false,
     },
   ],
   StudentActsNotice: [
@@ -326,6 +410,7 @@ export const dummyCategorySearch: TCategorySearch = {
       title: "2024년 산림분야 딥테크·빅데이터 활용 창업경진대회",
       url: "https://www.mju.ac.kr/bbs/mjukr/853/213391/artclView.do",
       marked: false,
+      read: false,
     },
     {
       id: 117,
@@ -333,6 +418,7 @@ export const dummyCategorySearch: TCategorySearch = {
       title: "도봉구 청년창업센터 서포터즈 모집",
       url: "https://www.mju.ac.kr/bbs/mjukr/853/212567/artclView.do",
       marked: false,
+      read: false,
     },
     {
       id: 252,
@@ -340,6 +426,150 @@ export const dummyCategorySearch: TCategorySearch = {
       title: "2024년 보건의료빅데이터 활용 창업경진대회",
       url: "https://www.mju.ac.kr/bbs/mjukr/853/210621/artclView.do",
       marked: false,
+      read: false,
+    },
+    {
+      id: 14100,
+      pubDate: "2024-09-30",
+      title: "[혁신사업-ABI-X사업단] 2024학년도 앱/웹서비스 개발 공모전",
+      url: "https://mju.ac.kr/bbs/mjukr/141/215534/artclView.do",
+      marked: false,
+      read: false,
+    },
+  ],
+  NormalNotice: [
+    {
+      id: 141,
+      pubDate: "2024-09-30",
+      title: "[혁신사업-ABI-X사업단] 2024학년도 앱/웹서비스 개발 공모전 공고",
+      url: "https://mju.ac.kr/bbs/mjukr/141/215534/artclView.do",
+      marked: false,
+      read: false,
+    },
+    {
+      id: 527,
+      pubDate: "2024-09-30",
+      title: "[2024 선배와의 취업멘토링 참여학생 모집(10월)",
+      url: "https://www.mju.ac.kr/bbs/mjukr/141/215527/artclView.do",
+      marked: false,
+      read: false,
+    },
+    {
+      id: 519,
+      pubDate: "2024-09-30",
+      title: "명지대학교 재학생 대상 2024년 온라인 폭력예방교육 안내",
+      url: "https://www.mju.ac.kr/bbs/mjukr/141/215519/artclView.do",
+      marked: false,
+      read: false,
+    },
+    {
+      id: 471,
+      pubDate: "2024-09-27",
+      title:
+        "명지대학교 학생상담센터(대학혁신지원사업) 2024년 명지인 연결고리 프로그램 참가자 모집",
+      url: "https://www.mju.ac.kr/bbs/mjukr/141/215471/artclView.do",
+      marked: false,
+      read: false,
+    },
+  ],
+  DormitoryEntryNotice: [
+    {
+      id: 154,
+      pubDate: "2024-07-08",
+      title: "2024-2학기 생활관 추가 입사 신청 안내",
+      url: "https://www.mju.ac.kr/bbs/mjukr/141/213317/artclView.do",
+      marked: false,
+      read: false,
+    },
+    {
+      id: 155,
+      pubDate: "2024-07-08",
+      title: "2024-2학기 생활관 추가 입사 신청 안내",
+      url: "https://www.mju.ac.kr/bbs/mjukr/141/213317/artclView.do",
+      marked: false,
+      read: false,
+    },
+    {
+      id: 156,
+      pubDate: "2024-07-08",
+      title: "2024-2학기 생활관 추가 입사 신청 안내",
+      url: "https://www.mju.ac.kr/bbs/mjukr/141/213317/artclView.do",
+      marked: false,
+      read: false,
+    },
+  ],
+  ScholarshipNotice: [
+    {
+      id: 1540,
+      pubDate: "2024-07-08",
+      title: "2024-2학기 장학금",
+      url: "https://www.mju.ac.kr/bbs/mjukr/141/213317/artclView.do",
+      marked: false,
+      read: false,
+    },
+    {
+      id: 1541,
+      pubDate: "2024-07-08",
+      title: "2024-2학기 장학금",
+      url: "https://www.mju.ac.kr/bbs/mjukr/141/213317/artclView.do",
+      marked: false,
+      read: false,
+    },
+    {
+      id: 1542,
+      pubDate: "2024-07-08",
+      title: "2024-2학기 장학금",
+      url: "https://www.mju.ac.kr/bbs/mjukr/141/213317/artclView.do",
+      marked: false,
+      read: false,
+    },
+    {
+      id: 1543,
+      pubDate: "2024-07-08",
+      title: "2024-2학기 장학금",
+      url: "https://www.mju.ac.kr/bbs/mjukr/141/213317/artclView.do",
+      marked: false,
+      read: false,
+    },
+    {
+      id: 1544,
+      pubDate: "2024-07-08",
+      title: "2024-2학기 장학금",
+      url: "https://www.mju.ac.kr/bbs/mjukr/141/213317/artclView.do",
+      marked: false,
+      read: false,
+    },
+    {
+      id: 1545,
+      pubDate: "2024-07-08",
+      title: "2024-2학기 장학금",
+      url: "https://www.mju.ac.kr/bbs/mjukr/141/213317/artclView.do",
+      marked: false,
+      read: false,
+    },
+    {
+      id: 1546,
+      pubDate: "2024-07-08",
+      title: "2024-2학기 장학금",
+      url: "https://www.mju.ac.kr/bbs/mjukr/141/213317/artclView.do",
+      marked: false,
+      read: false,
+    },
+    {
+      id: 1547,
+      pubDate: "2024-07-08",
+      title: "2024-2학기 장학금",
+      url: "https://www.mju.ac.kr/bbs/mjukr/141/213317/artclView.do",
+      marked: false,
+      read: false,
+    },
+    {
+      id: 150000,
+      pubDate: "2024-07-08",
+      title: "2024-2학기 장학금",
+      url: "https://www.mju.ac.kr/bbs/mjukr/141/213317/artclView.do",
+      marked: false,
+      read: false,
     },
   ],
 };

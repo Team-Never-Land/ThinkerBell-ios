@@ -30,6 +30,7 @@ export const dummyFavoritesNotice: TCategorySearch = {
       title: "[입찰공고]명지대학교 전임교원 신규임용자 전산장비 구입 입찰",
       url: "https://www.mju.ac.kr/bbs/mjukr/147/213493/artclView.do",
       marked: true,
+      read: false,
     },
     {
       id: 43,
@@ -37,6 +38,7 @@ export const dummyFavoritesNotice: TCategorySearch = {
       title: "[입찰공고]명지대학교 전임교원 신규임용자 전산장비 구입 입찰",
       url: "https://www.mju.ac.kr/bbs/mjukr/147/213493/artclView.do",
       marked: true,
+      read: false,
     },
     {
       id: 44,
@@ -44,6 +46,7 @@ export const dummyFavoritesNotice: TCategorySearch = {
       title: "[입찰공고]명지대학교 전임교원 신규임용자 전산장비 구입 입찰",
       url: "https://www.mju.ac.kr/bbs/mjukr/147/213493/artclView.do",
       marked: true,
+      read: false,
     },
     {
       id: 45,
@@ -51,6 +54,7 @@ export const dummyFavoritesNotice: TCategorySearch = {
       title: "[입찰공고]명지대학교 전임교원 신규임용자 전산장비 구입 입찰",
       url: "https://www.mju.ac.kr/bbs/mjukr/147/213493/artclView.do",
       marked: true,
+      read: false,
     },
     {
       id: 46,
@@ -58,6 +62,7 @@ export const dummyFavoritesNotice: TCategorySearch = {
       title: "[입찰공고]명지대학교 전임교원 신규임용자 전산장비 구입 입찰",
       url: "https://www.mju.ac.kr/bbs/mjukr/147/213493/artclView.do",
       marked: true,
+      read: false,
     },
     {
       id: 47,
@@ -65,6 +70,7 @@ export const dummyFavoritesNotice: TCategorySearch = {
       title: "[입찰공고]명지대학교 전임교원 신규임용자 전산장비 구입 입찰",
       url: "https://www.mju.ac.kr/bbs/mjukr/147/213493/artclView.do",
       marked: true,
+      read: false,
     },
     {
       id: 48,
@@ -72,6 +78,7 @@ export const dummyFavoritesNotice: TCategorySearch = {
       title: "[입찰공고]명지대학교 전임교원 신규임용자 전산장비 구입 입찰",
       url: "https://www.mju.ac.kr/bbs/mjukr/147/213493/artclView.do",
       marked: true,
+      read: false,
     },
     {
       id: 49,
@@ -79,6 +86,7 @@ export const dummyFavoritesNotice: TCategorySearch = {
       title: "[입찰공고]명지대학교 전임교원 신규임용자 전산장비 구입 입찰",
       url: "https://www.mju.ac.kr/bbs/mjukr/147/213493/artclView.do",
       marked: true,
+      read: false,
     },
     {
       id: 50,
@@ -86,6 +94,7 @@ export const dummyFavoritesNotice: TCategorySearch = {
       title: "[입찰공고]명지대학교 전임교원 신규임용자 전산장비 구입 입찰",
       url: "https://www.mju.ac.kr/bbs/mjukr/147/213493/artclView.do",
       marked: true,
+      read: false,
     },
     {
       id: 61,
@@ -93,6 +102,7 @@ export const dummyFavoritesNotice: TCategorySearch = {
       title: "[입찰공고]명지대학교 전임교원 신규임용자 전산장비 구입 입찰",
       url: "https://www.mju.ac.kr/bbs/mjukr/147/213493/artclView.do",
       marked: true,
+      read: false,
     },
     {
       id: 62,
@@ -100,6 +110,7 @@ export const dummyFavoritesNotice: TCategorySearch = {
       title: "[입찰공고]명지대학교 전임교원 신규임용자 전산장비 구입 입찰",
       url: "https://www.mju.ac.kr/bbs/mjukr/147/213493/artclView.do",
       marked: true,
+      read: false,
     },
     {
       id: 63,
@@ -107,6 +118,7 @@ export const dummyFavoritesNotice: TCategorySearch = {
       title: "[입찰공고]명지대학교 전임교원 신규임용자 전산장비 구입 입찰",
       url: "https://www.mju.ac.kr/bbs/mjukr/147/213493/artclView.do",
       marked: true,
+      read: false,
     },
     {
       id: 64,
@@ -114,6 +126,7 @@ export const dummyFavoritesNotice: TCategorySearch = {
       title: "[입찰공고]명지대학교 전임교원 신규임용자 전산장비 구입 입찰",
       url: "https://www.mju.ac.kr/bbs/mjukr/147/213493/artclView.do",
       marked: true,
+      read: false,
     },
     {
       id: 65,
@@ -121,6 +134,7 @@ export const dummyFavoritesNotice: TCategorySearch = {
       title: "[입찰공고]명지대학교 전임교원 신규임용자 전산장비 구입 입찰",
       url: "https://www.mju.ac.kr/bbs/mjukr/147/213493/artclView.do",
       marked: true,
+      read: false,
     },
     {
       id: 66,
@@ -128,6 +142,7 @@ export const dummyFavoritesNotice: TCategorySearch = {
       title: "[입찰공고]명지대학교 전임교원 신규임용자 전산장비 구입 입찰",
       url: "https://www.mju.ac.kr/bbs/mjukr/147/213493/artclView.do",
       marked: true,
+      read: false,
     },
     {
       id: 67,
@@ -135,6 +150,7 @@ export const dummyFavoritesNotice: TCategorySearch = {
       title: "[입찰공고]명지대학교 전임교원 신규임용자 전산장비 구입 입찰",
       url: "https://www.mju.ac.kr/bbs/mjukr/147/213493/artclView.do",
       marked: true,
+      read: false,
     },
     {
       id: 68,
@@ -142,6 +158,7 @@ export const dummyFavoritesNotice: TCategorySearch = {
       title: "[입찰공고]명지대학교 전임교원 신규임용자 전산장비 구입 입찰",
       url: "https://www.mju.ac.kr/bbs/mjukr/147/213493/artclView.do",
       marked: true,
+      read: false,
     },
   ],
   NormalNotice: [
@@ -152,6 +169,7 @@ export const dummyFavoritesNotice: TCategorySearch = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/214167/artclView.do",
       marked: true,
       important: false,
+      read: false,
     },
     {
       id: 1,
@@ -160,6 +178,7 @@ export const dummyFavoritesNotice: TCategorySearch = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/214494/artclView.do",
       marked: true,
       important: true,
+      read: false,
     },
   ],
   AcademicNotice: [
@@ -170,6 +189,7 @@ export const dummyFavoritesNotice: TCategorySearch = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/214167/artclView.do",
       marked: true,
       important: false,
+      read: false,
     },
     {
       id: 2,
@@ -178,6 +198,7 @@ export const dummyFavoritesNotice: TCategorySearch = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/214494/artclView.do",
       marked: true,
       important: true,
+      read: false,
     },
   ],
   EventNotice: [
@@ -188,6 +209,7 @@ export const dummyFavoritesNotice: TCategorySearch = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/214167/artclView.do",
       marked: true,
       important: false,
+      read: false,
     },
     {
       id: 5,
@@ -196,6 +218,7 @@ export const dummyFavoritesNotice: TCategorySearch = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/214494/artclView.do",
       marked: true,
       important: true,
+      read: false,
     },
   ],
   ScholarshipNotice: [
@@ -206,6 +229,7 @@ export const dummyFavoritesNotice: TCategorySearch = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/214167/artclView.do",
       marked: true,
       important: false,
+      read: false,
     },
     {
       id: 7,
@@ -214,6 +238,7 @@ export const dummyFavoritesNotice: TCategorySearch = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/214494/artclView.do",
       marked: true,
       important: true,
+      read: false,
     },
   ],
   CareerNotice: [
@@ -224,6 +249,7 @@ export const dummyFavoritesNotice: TCategorySearch = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/214167/artclView.do",
       marked: true,
       important: false,
+      read: false,
     },
     {
       id: 9,
@@ -232,6 +258,7 @@ export const dummyFavoritesNotice: TCategorySearch = {
       url: "https://www.mju.ac.kr/bbs/mjukr/141/214494/artclView.do",
       marked: true,
       important: true,
+      read: false,
     },
   ],
 };
