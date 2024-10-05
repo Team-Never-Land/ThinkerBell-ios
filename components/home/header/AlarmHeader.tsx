@@ -25,6 +25,7 @@ export default function AlarmHeader({
     장학금: false,
     공모전: false,
   }); // 카테고리별 읽지 않은 공지 상태
+  const [savedKeywords, setSavedKeywords] = useState<string[]>([]); // AsyncStorage에서 불러온 키워드 저장
 
   const categories = ["키워드", "입사신청", "장학금", "공모전"];
   const keyMap: { [key: string]: TCategoryKey | string } = {
@@ -36,7 +37,7 @@ export default function AlarmHeader({
 
   // 카테고리별로 빨간 점의 위치를 정의
   const dotPositions: { [key: string]: number } = {
-    키워드: 60,
+    키워드: 45,
     입사신청: 60,
     장학금: 45,
     공모전: 45,
@@ -70,6 +71,21 @@ export default function AlarmHeader({
     }));
   };
 
+  const loadSavedKeywords = async () => {
+    try {
+      const storedKeywords = await AsyncStorage.getItem("keywords");
+      if (storedKeywords) {
+        setSavedKeywords(JSON.parse(storedKeywords));
+      } else {
+        setSavedKeywords([]); // 저장된 키워드가 없을 경우 빈 배열
+      }
+    } catch (error) {
+      console.error("저장된 키워드 불러오기 오류:", error);
+    }
+  };
+  useEffect(() => {
+    loadSavedKeywords(); // 컴포넌트가 마운트될 때 키워드 로드
+  }, []);
   const getNoticesArray = async (key: string) => {
     try {
       const existingNotices = await AsyncStorage.getItem(key);
@@ -113,24 +129,20 @@ export default function AlarmHeader({
     }
   };
 
-  const filterByKeyword = (keyword: string) => {
+  const filterByKeywords = (keywords: string[]) => {
     const results: TCategoryList[] = [];
 
-    // 키워드를 포함하는 공지를 카테고리별로 필터링
     Object.keys(dummyCategorySearch).forEach((key) => {
       const categoryKey = key as TCategoryKey;
       const notices = dummyCategorySearch[categoryKey] || [];
 
-      const filteredNotices = notices.filter((notice) =>
-        notice.title.includes(keyword)
-      );
+      keywords.forEach((keyword) => {
+        const filteredNotices = notices.filter((notice) =>
+          notice.title.includes(keyword)
+        );
 
-      // 필터링된 공지들을 결과에 추가
-      results.push(...filteredNotices);
-
-      console.log(
-        `필터링된 공지 (${keyword}): 카테고리 ${categoryKey}, 총 ${filteredNotices.length}개`
-      );
+        results.push(...filteredNotices);
+      });
     });
 
     return results;
@@ -142,11 +154,10 @@ export default function AlarmHeader({
 
     // 키워드 및 공모전 필터링
     if (category === "키워드") {
-      const keyword = "명지";
-      notices = filterByKeyword(keyword);
+      notices = filterByKeywords(savedKeywords);
       categoryKey = `키워드`;
     } else if (category === "공모전") {
-      notices = filterByKeyword("공모전");
+      notices = filterByKeywords(["공모전"]);
       categoryKey = `공모전`;
     } else if (category === "입사신청" || category === "장학금") {
       const categoryKeyFromMap = keyMap[category] as TCategoryKey;

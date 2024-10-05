@@ -1,10 +1,11 @@
-import { View, Text, FlatList } from "react-native";
+import { View, Text, FlatList, Pressable } from "react-native";
 import React, { useState, useEffect } from "react";
 import AlarmHeader from "@/components/home/header/AlarmHeader";
 import { TCategoryList } from "@/types/category";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AlarmCategoryItem from "@/components/home/AlarmCategoryItem";
 import { useNavigation } from "expo-router";
+import { Color, Font } from "@/constants/Theme";
 
 export default function AlarmPage() {
   const navigation = useNavigation();
@@ -13,6 +14,21 @@ export default function AlarmPage() {
   const [hasUnreadNotices, setHasUnreadNotices] = useState<boolean>(false); // 읽지 않은 공지가 있는지
   const [unreadCount, setUnreadCount] = useState<number>(0); // 읽지 않은 공지 개수
   const [categoryName, setCategoryName] = useState<string>(""); // 카테고리 이름
+  const [keywords, setKeywords] = useState<string[]>([]); // 키워드 상태 관리
+
+  const loadKeywords = async () => {
+    try {
+      const storedKeywords = await AsyncStorage.getItem("keywords");
+      const parsedKeywords = storedKeywords ? JSON.parse(storedKeywords) : [];
+      setKeywords(parsedKeywords);
+    } catch (error) {
+      console.error("키워드 불러오기 오류:", error);
+    }
+  };
+
+  useEffect(() => {
+    loadKeywords();
+  }, []);
 
   const getViewedNotices = async (category: string) => {
     const storageKey = `${category}_viewed`;
@@ -73,28 +89,80 @@ export default function AlarmPage() {
   };
 
   return (
-    <View>
+    <View style={{ flex: 1, backgroundColor: Color.WHITE }}>
       <AlarmHeader
         onFilterNotices={handleFilterNotices} // 필터링된 공지사항을 헤더에서 전달
         navigation={navigation}
       />
+      {keywords.length === 0 ? (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <View
+            style={{
+              width: 196,
+              height: 170,
+              justifyContent: "space-between",
+            }}
+          >
+            <Text
+              style={{
+                ...Font.Paragraph.Medium,
+                color: Color.contents.contentSecondary,
+                textAlign: "center",
+                marginBottom: 20,
+                width: 196,
+                height: 52,
+              }}
+            >
+              알림을 받고 싶은 공지가 있다면 키워드를 등록해 놓으세요!
+            </Text>
 
-      {filteredNotices.length > 0 ? (
+            <Pressable
+              style={{
+                width: 178,
+                height: 56,
+                borderWidth: 2,
+                borderColor: "#E4E9EF",
+                alignItems: "center",
+                justifyContent: "center",
+                alignSelf: "center",
+                backgroundColor: Color.BLUE,
+              }}
+              onPress={() => navigation.navigate("RegisKeyword")}
+            >
+              <Text
+                style={{
+                  color: Color.WHITE,
+                  fontWeight: "700",
+                  fontSize: 16,
+                  textAlign: "center",
+                }}
+              >
+                키워드 등록하기
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+      ) : (
         <FlatList
+          style={{
+            marginBottom: 65,
+          }}
           data={filteredNotices}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <AlarmCategoryItem
               item={item}
-              categoryKey={categoryName}
+              categoryKey="keyword"
               updateList={handleUpdateList}
             />
           )}
         />
-      ) : (
-        <Text style={{ textAlign: "center", marginTop: 20 }}>
-          해당 카테고리에 공지사항이 없습니다.
-        </Text>
       )}
     </View>
   );
