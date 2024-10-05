@@ -14,10 +14,46 @@ import ContactPage from "../Home/ContactPage";
 import HomepagePage from "../Home/HomepagePage";
 import SearchResultPage from "../Home/SearchResultPage";
 import Department from "@/components/home/Department";
+import Keyword from "../Setting/Keyword";
+import RegisKeyword from "../Setting/RegisKeyword";
+import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 
 const HomeStack = createNativeStackNavigator();
 
-export default function Home() {
+export default function Home({
+  navigation,
+  route,
+}: {
+  navigation: any;
+  route: any;
+}) {
+  React.useLayoutEffect(() => {
+    const routeName = getFocusedRouteNameFromRoute(route);
+    if (routeName === "Keyword" || routeName === "RegisKeyword") {
+      navigation.setOptions({
+        tabBarStyle: { display: "none" },
+      });
+    } else {
+      // 다른 페이지에서는 탭바 표시
+      navigation.setOptions({
+        tabBarStyle: {
+          borderTopWidth: 0,
+          backgroundColor: Color.WHITE,
+          height: "auto",
+          borderTopLeftRadius: 27,
+          borderTopRightRadius: 27,
+          position: "absolute",
+          shadowColor: "#bababa",
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.15,
+          shadowRadius: 5,
+          elevation: 2,
+          display: "flex",
+        },
+      });
+    }
+  }, [navigation, route]);
+
   return (
     <HomeStack.Navigator>
       <HomeStack.Screen
@@ -53,6 +89,16 @@ export default function Home() {
       <HomeStack.Screen
         name="SearchResultPage"
         component={SearchResultPage}
+        options={{ headerShown: false }}
+      />
+      <HomeStack.Screen
+        name="Keyword"
+        component={Keyword}
+        options={{ headerShown: false }}
+      />
+      <HomeStack.Screen
+        name="RegisKeyword"
+        component={RegisKeyword}
         options={{ headerShown: false }}
       />
     </HomeStack.Navigator>
