@@ -22,14 +22,14 @@ export function Settings({ navigation }: { navigation: any }) {
   const currentVersion = "1.0.0"; // 현재 앱 버전
   const latestVersion = "1.1.0"; // 최신 버전, 서버에서 가져온다고 가정
 
-  useEffect(() => {
-    // 버전 체크 로직 (여기서는 최신 버전이 아닌 경우를 가정)
-    if (currentVersion !== latestVersion) {
-      setIsLatestVersion(false);
-    }
+  // useEffect(() => {
+  //   // 버전 체크 로직 (여기서는 최신 버전이 아닌 경우를 가정)
+  //   if (currentVersion !== latestVersion) {
+  //     setIsLatestVersion(false);
+  //   }
 
-    loadKeywords();
-  }, []);
+  //   loadKeywords();
+  // }, []);
 
   const loadKeywords = async () => {
     try {

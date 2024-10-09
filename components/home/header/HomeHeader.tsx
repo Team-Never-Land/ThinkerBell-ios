@@ -11,8 +11,11 @@ import React, { useEffect, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Color, Font } from "@/constants/Theme";
 import BelloffIcon from "../../../assets/images/icon/Topbar/Bell-Off.svg";
+import BellonIcon from "../../../assets/images/icon/Topbar/Bell-On.svg";
+
 import SearchIcon from "../../../assets/images/icon/Topbar/Search.svg";
 import MenuIcon from "../../../assets/images/icon/Underbar/Menu.svg";
+import LogoIcon from "@/assets/images/icon/Logo.svg";
 import { dummyCategorySearch } from "@/assets/data/dummyCategory"; // 더미 데이터 가져오기
 import { TCategoryKey, TCategoryList, TCategorySearch } from "@/types/category";
 import { ScrollView } from "react-native-gesture-handler";
@@ -20,9 +23,11 @@ import { ScrollView } from "react-native-gesture-handler";
 export default function HomeHeader({
   navigation,
   setCategoryNotices,
+  hasUnreadNotices,
 }: {
   navigation: any;
   setCategoryNotices: React.Dispatch<React.SetStateAction<TCategoryList[]>>;
+  hasUnreadNotices: boolean;
 }) {
   const categories = ["일반", "행사", "학사", "장학", "취업"];
   const { top } = useSafeAreaInsets();
@@ -47,7 +52,10 @@ export default function HomeHeader({
       dummyCategorySearch["NormalNotice"]?.slice(0, 3) || [];
     setCategoryNotices(initialNotices);
   }, []);
-
+  // hasUnreadNotices 값이 변경될 때마다 로그 출력
+  useEffect(() => {
+    console.log("Unread Notices Status(homeheader):", hasUnreadNotices);
+  }, [hasUnreadNotices]);
   return (
     <>
       {/* Safe Area Inset */}
@@ -77,30 +85,21 @@ export default function HomeHeader({
             justifyContent: "space-between",
           }}
         >
-          <Image
-            source={require("../../../assets/images/logo.png")}
-            style={{
-              height: 17,
-              width: 22,
-            }}
-          />
+          <LogoIcon />
 
           {/* 벨 아이콘 */}
           <Pressable
-            onPress={() => {
-              console.log("bell");
-              navigation.navigate("AlarmPage");
-            }}
+            onPress={() => navigation.navigate("AlarmPage")}
             style={{
               position: "absolute",
-              left: "79.55%", // 79.55% 좌측
+              left: "79.55%",
               top: 0,
               bottom: 0,
-              justifyContent: "center", // 수직 중앙 정렬
-              alignItems: "center", // 수평 중앙 정렬
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            <BelloffIcon />
+            {hasUnreadNotices ? <BellonIcon /> : <BelloffIcon />}
           </Pressable>
 
           {/* 서치 아이콘 */}
