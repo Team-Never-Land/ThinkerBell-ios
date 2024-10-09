@@ -8,7 +8,7 @@ import { useNavigation } from "expo-router";
 import { Color, Font } from "@/constants/Theme";
 import { NativeStackNavigationProp } from "react-native-screens/lib/typescript/native-stack/types";
 
-export default function AlarmPage() {
+export default function AlarmPage({}: {}) {
   const navigation = useNavigation();
 
   const [filteredNotices, setFilteredNotices] = useState<TCategoryList[]>([]); // 필터링된 공지사항
@@ -42,12 +42,10 @@ export default function AlarmPage() {
   const checkUnreadNotices = (notices: TCategoryList[], category: string) => {
     const unreadNotices = notices.filter((notice) => !notice.read); // read: false인 공지 필터링
     setUnreadCount(unreadNotices.length); // 읽지 않은 공지 개수 설정
-    setHasUnreadNotices(unreadNotices.length > 0); // 읽지 않은 공지가 하나라도 있으면 true, 없으면 false
+    const hasUnread = unreadNotices.length > 0;
 
-    // 로그 출력
-    console.log(
-      `카테고리: ${category}, 총 공지 개수: ${notices.length}, 읽지 않은 공지 개수: ${unreadNotices.length}`
-    );
+    setHasUnreadNotices(hasUnread);
+    return hasUnread; // 읽지 않은 공지가 있는지 여부 반환
   };
 
   const handleFilterNotices = async (
@@ -88,6 +86,8 @@ export default function AlarmPage() {
 
     updateOriginalNotices();
   };
+
+  // 모든 카테고리에서 읽지 않은 공지를 확인하는 함수
 
   return (
     <View style={{ flex: 1, backgroundColor: Color.WHITE }}>

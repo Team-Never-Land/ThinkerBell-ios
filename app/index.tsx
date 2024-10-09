@@ -1,11 +1,3 @@
-// import { Redirect } from "expo-router";
-// import PushAlarm from "./Setting/PushAlarm";
-// import { View } from "react-native";
-
-// export default function Index() {
-//   return <Redirect href={"/Home"} />;
-// }
-// Index.tsx (메인 컴포넌트)
 import React, { useState } from "react";
 import { Redirect } from "expo-router";
 import { View } from "react-native";
