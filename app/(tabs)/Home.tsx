@@ -1,5 +1,8 @@
 import { View, FlatList } from "react-native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import HomeHeader from "@/components/home/header/HomeHeader";
 import AlarmPage from "../Home/AlarmPage";
@@ -16,10 +19,31 @@ import SearchResultPage from "../Home/SearchResultPage";
 import Department from "@/components/home/Department";
 import Keyword from "../Setting/Keyword";
 import RegisKeyword from "../Setting/RegisKeyword";
-import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
+import {
+  getFocusedRouteNameFromRoute,
+  RouteProp,
+} from "@react-navigation/native";
 
-const HomeStack = createNativeStackNavigator();
+type HomeStackParamList = {
+  HomeMain: undefined;
+  AlarmPage: undefined;
+  SearchPage: undefined;
+  CategoryList: undefined;
+  ContactPage: undefined;
+  HomePage: undefined;
+  SearchResultPage: undefined;
+  Keyword: undefined;
+  RegisKeyword: undefined;
+};
 
+const HomeStack = createNativeStackNavigator<HomeStackParamList>();
+
+// navigation 및 route의 타입 지정
+type HomeScreenNavigationProp = NativeStackNavigationProp<
+  HomeStackParamList,
+  "HomeMain"
+>;
+type HomeScreenRouteProp = RouteProp<HomeStackParamList, "HomeMain">;
 export default function Home({
   navigation,
   route,
@@ -105,7 +129,7 @@ export default function Home({
   );
 }
 
-function HomeMain({ navigation }: { navigation: any }) {
+function HomeMain({ navigation }: { navigation: HomeScreenNavigationProp }) {
   const [categoryNotices, setCategoryNotices] = useState<TCategoryList[]>([]);
 
   return (

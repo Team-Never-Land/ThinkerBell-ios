@@ -497,6 +497,14 @@ export const dummyCategorySearch: TCategorySearch = {
       marked: false,
       read: false,
     },
+    {
+      id: 1567,
+      pubDate: "2024-07-08",
+      title: "2024-2학기 생활관 추가 입사 신청 안내",
+      url: "https://www.mju.ac.kr/bbs/mjukr/141/213317/artclView.do",
+      marked: false,
+      read: false,
+    },
   ],
   ScholarshipNotice: [
     {
@@ -540,7 +548,7 @@ export const dummyCategorySearch: TCategorySearch = {
       read: false,
     },
     {
-      id: 1545,
+      id: 154511,
       pubDate: "2024-07-08",
       title: "2024-2학기 장학금",
       url: "https://www.mju.ac.kr/bbs/mjukr/141/213317/artclView.do",
@@ -564,7 +572,7 @@ export const dummyCategorySearch: TCategorySearch = {
       read: false,
     },
     {
-      id: 150000,
+      id: 1503190,
       pubDate: "2024-07-08",
       title: "2024-2학기 장학금",
       url: "https://www.mju.ac.kr/bbs/mjukr/141/213317/artclView.do",

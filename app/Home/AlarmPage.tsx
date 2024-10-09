@@ -6,6 +6,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import AlarmCategoryItem from "@/components/home/AlarmCategoryItem";
 import { useNavigation } from "expo-router";
 import { Color, Font } from "@/constants/Theme";
+import { NativeStackNavigationProp } from "react-native-screens/lib/typescript/native-stack/types";
 
 export default function AlarmPage() {
   const navigation = useNavigation();
