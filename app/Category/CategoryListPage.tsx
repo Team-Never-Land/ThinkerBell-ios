@@ -1,17 +1,32 @@
 import CategoryBox from "@/components/category/CategoryBox";
 import { Color, Font } from "@/constants/Theme";
 import React, { useEffect, useState } from "react";
-import { View, Text, SafeAreaView, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  StatusBar,
+  SafeAreaView,
+} from "react-native";
 import DraggableFlatList, {
   RenderItemParams,
 } from "react-native-draggable-flatlist";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { initialCategory } from "@/assets/data/initialCategory";
+import { useFocusEffect } from "expo-router";
 
 const CategoryListPage = ({ navigation }: { navigation: any }) => {
   const [data, setData] = useState<{ key: string; text: string }[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const storageKey = "@category_order";
+
+  useFocusEffect(
+    React.useCallback(() => {
+      StatusBar.setBarStyle("dark-content");
+
+      return () => {};
+    }, [])
+  );
 
   useEffect(() => {
     const loadCategoryOrder = async () => {
@@ -56,12 +71,8 @@ const CategoryListPage = ({ navigation }: { navigation: any }) => {
   };
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: Color.WHITE,
-      }}
-    >
+    <SafeAreaView style={{ flex: 1, backgroundColor: Color.WHITE }}>
+      <StatusBar backgroundColor={Color.WHITE} />
       <View
         style={{
           paddingLeft: 22,

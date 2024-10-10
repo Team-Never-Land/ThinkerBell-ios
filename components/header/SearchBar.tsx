@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { View, TextInput, Keyboard, Pressable, Text } from "react-native";
+import React, { useEffect } from "react";
+import { View, TextInput, Keyboard, Pressable } from "react-native";
 import SearchIcon from "../../assets/images/icon/Topbar/Search.svg";
 import { Color, Font } from "@/constants/Theme";
+import Toast from "react-native-toast-message";
 
 export default function SearchBar({
   search,
@@ -12,22 +13,36 @@ export default function SearchBar({
   setSearch: React.Dispatch<React.SetStateAction<string>>;
   onSearch: (search: string) => void;
 }) {
-  const [errorMessage, setErrorMessage] = useState("");
-
-  const isValidSearch = (text: string) => {
-    const validText = /^[a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣]{1,12}$/;
-    return validText.test(text);
-  };
+  useEffect(() => {
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        if (search.length < 2) {
+          Toast.show({
+            type: "success",
+            text1: "2글자 이상 입력해주세요",
+            position: "bottom",
+            visibilityTime: 1500,
+            autoHide: true,
+          });
+        }
+      }
+    );
+    return () => {
+      keyboardDidHideListener.remove();
+    };
+  }, [search]);
 
   const handleSearch = () => {
-    if (search.length < 2) {
-      setErrorMessage("2글자 이상 작성해야합니다.");
-    } else if (!isValidSearch(search)) {
-      setErrorMessage("키워드를 정확하게 입력해주세요.");
-    } else {
+    if (search.length >= 2) {
       onSearch(search);
       Keyboard.dismiss();
     }
+  };
+
+  const handleChangeText = (text: string) => {
+    const filteredText = text.replace(/[^a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣\s]/g, "");
+    setSearch(filteredText);
   };
 
   return (
@@ -52,10 +67,7 @@ export default function SearchBar({
             flexGrow: 1,
             paddingLeft: 17,
           }}
-          onChangeText={(text) => {
-            setSearch(text);
-            setErrorMessage("");
-          }}
+          onChangeText={handleChangeText}
           value={search}
           placeholder="검색어"
           placeholderTextColor={Color.WHITE}
@@ -73,18 +85,6 @@ export default function SearchBar({
           <SearchIcon />
         </Pressable>
       </View>
-      <Text
-        style={{
-          ...Font.Pretendard500[11],
-          color: Color.RED,
-          height: 17,
-          marginBottom: 11,
-          paddingVertical: 4,
-          backfaceVisibility: errorMessage === "" ? "visible" : "hidden",
-        }}
-      >
-        {errorMessage}
-      </Text>
     </View>
   );
 }

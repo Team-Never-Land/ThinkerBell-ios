@@ -13,6 +13,18 @@ export type TCategoryKey =
   | "LibraryNotice"
   | "TeachingNotice";
 
+export type TCategoryListResponse = {
+  code: number;
+  status: string;
+  message: string;
+  data: {
+    items: TCategoryList[];
+    page: number;
+    size: number;
+    totalItems: number;
+  };
+};
+
 export type TCategoryList = {
   id: number;
   pubDate: string;
@@ -22,6 +34,13 @@ export type TCategoryList = {
   important?: boolean;
   campus?: string;
   read: boolean;
+};
+
+export type TCategorySearchResponse = {
+  code: number;
+  status: string;
+  message: string;
+  data: TCategorySearch;
 };
 
 export type TCategorySearch = {

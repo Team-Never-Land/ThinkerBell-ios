@@ -1,7 +1,3 @@
-import {
-  dummyCategory,
-  dummyCategorySearch,
-} from "@/assets/data/dummyCategory";
 import CategoryBackButton from "@/components/category/CategoryBackButton";
 import CategoryItem from "@/components/category/CategoryItem";
 import CategoryEmpty from "@/components/category/CategoryEmpty";
@@ -12,7 +8,23 @@ import { Color, Font } from "@/constants/Theme";
 import { TCategoryKey, TCategoryList } from "@/types/category";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { ScrollView, View, Text } from "react-native";
+import { ScrollView, View, Text, ActivityIndicator } from "react-native";
+import {
+  getAcademicNotice,
+  getBiddingNotice,
+  getCareerNotice,
+  getDormitoryEntryNotice,
+  getDormitoryNotice,
+  getEventNotice,
+  getLibraryNotice,
+  getNormalNotice,
+  getRevisionNotice,
+  getSafetyNotice,
+  getScholarshipNotice,
+  getStudentActsNotice,
+  getTeachingNotice,
+} from "@/service/getNotice";
+import { getSearchNotices } from "@/service/getSearchNotices";
 
 type CategorySearchRouteProp = RouteProp<
   { CategorySearch: { categoryText: string; categoryKey: TCategoryKey } },
@@ -25,6 +37,7 @@ const CategorySearchPage = ({ navigation }: { navigation: any }) => {
   const [page, setPage] = useState(0);
   const [totalSize, setTotalSize] = useState(0);
   const [list, setList] = useState<TCategoryList[]>([]);
+  const [searchList, setSearchList] = useState<TCategoryList[]>([]);
   const [pageInfo, setPageInfo] = useState({
     page: 0,
     size: 0,
@@ -37,14 +50,75 @@ const CategorySearchPage = ({ navigation }: { navigation: any }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setList(dummyCategory.items);
-    setPageInfo({
-      page: dummyCategory.page,
-      size: dummyCategory.size,
-      totalItems: dummyCategory.totalItems,
-    });
-    setIsLoading(false);
-  }, [page]);
+    const fetchData = async () => {
+      try {
+        let response;
+        if (categoryKey && !isSearch) {
+          switch (categoryKey) {
+            case "NormalNotice":
+              response = await getNormalNotice(page);
+              break;
+            case "AcademicNotice":
+              response = await getAcademicNotice(page);
+              break;
+            case "EventNotice":
+              response = await getEventNotice(page);
+              break;
+            case "ScholarshipNotice":
+              response = await getScholarshipNotice(page);
+              break;
+            case "CareerNotice":
+              response = await getCareerNotice(page);
+              break;
+            case "StudentActsNotice":
+              response = await getStudentActsNotice(page);
+              break;
+            case "BiddingNotice":
+              response = await getBiddingNotice(page);
+              break;
+            case "SafetyNotice":
+              response = await getSafetyNotice(page);
+              break;
+            case "RevisionNotice":
+              response = await getRevisionNotice(page);
+              break;
+            case "DormitoryNotice":
+              response = await getDormitoryNotice(page, selectedCampus);
+              break;
+            case "DormitoryEntryNotice":
+              response = await getDormitoryEntryNotice(page, selectedCampus);
+              break;
+            case "LibraryNotice":
+              response = await getLibraryNotice(page, selectedCampus);
+              break;
+            case "TeachingNotice":
+              response = await getTeachingNotice(page);
+              break;
+            default:
+              response = await getNormalNotice(page);
+              break;
+          }
+          if (response.code === 200) {
+            setList(response.data.items);
+            setPageInfo({
+              page: response.data.page,
+              size: response.data.size,
+              totalItems: response.data.totalItems,
+            });
+          }
+        }
+      } catch (error) {
+        console.error(error);
+        setList([]);
+      } finally {
+        if (!isSearch) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+  }, [page, selectedCampus, isSearch]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -53,14 +127,40 @@ const CategorySearchPage = ({ navigation }: { navigation: any }) => {
   }, [isLoading]);
 
   //검색
-  const onSearch = () => {
+  const onSearch = async () => {
     setSearchText(search);
     setIsSearch(true);
+    setIsLoading(true);
 
-    if (dummyCategorySearch[categoryKey]) {
-      setList(dummyCategorySearch[categoryKey]);
-    } else {
+    try {
+      const response = await getSearchNotices(search);
+      if (response.data[categoryKey]) {
+        if (
+          categoryKey === "DormitoryNotice" ||
+          categoryKey === "DormitoryEntryNotice" ||
+          categoryKey === "LibraryNotice"
+        ) {
+          setSearchList(response.data[categoryKey]);
+          handleSearchList(response.data[categoryKey], selectedCampus);
+        } else {
+          setList(response.data[categoryKey]);
+        }
+      } else {
+        setList([]);
+      }
+    } catch (error) {
+      console.error(error);
       setList([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSearchList = (searchLists: TCategoryList[], campus: string) => {
+    if (campus === "전체") {
+      setList(searchLists);
+    } else {
+      setList(searchLists.filter((item) => item.campus === campus));
     }
   };
 
@@ -70,6 +170,16 @@ const CategorySearchPage = ({ navigation }: { navigation: any }) => {
         item.id === id ? { ...item, marked: !item.marked } : item
       )
     );
+  };
+
+  const handleSelectedCampus = (campus: string) => {
+    setSelectedCampus(campus);
+    if (isSearch) {
+      handleSearchList(searchList, campus);
+    } else {
+      setIsLoading(true);
+      setPage(0);
+    }
   };
 
   return (
@@ -86,8 +196,14 @@ const CategorySearchPage = ({ navigation }: { navigation: any }) => {
         setSearch={setSearch}
         onSearch={onSearch}
       />
-      {list.length > 0 ? (
-        <ScrollView showsVerticalScrollIndicator={false}>
+      {isLoading ? (
+        <ActivityIndicator
+          size="large"
+          color={Color.BLACK}
+          style={{ flex: 1, justifyContent: "center" }}
+        />
+      ) : list.length > 0 ? (
+        <>
           {isSearch ? (
             <View
               style={{
@@ -118,21 +234,26 @@ const CategorySearchPage = ({ navigation }: { navigation: any }) => {
                   ‘{searchText}’이(가) 포함된 공지사항 ({list.length}개)
                 </Text>
               </View>
-              <View
-                style={{
-                  paddingTop: 13,
-                  paddingRight: 19,
-                }}
-              >
-                <DropdownMenu
-                  selectedCampus={selectedCampus}
-                  setSelectedCampus={setSelectedCampus}
-                />
-              </View>
+              {(categoryKey === "DormitoryNotice" ||
+                categoryKey === "DormitoryEntryNotice" ||
+                categoryKey === "LibraryNotice") && (
+                <View
+                  style={{
+                    paddingTop: 13,
+                    paddingRight: 19,
+                  }}
+                >
+                  <DropdownMenu
+                    selectedCampus={selectedCampus}
+                    handleSelectedCampus={handleSelectedCampus}
+                  />
+                </View>
+              )}
             </View>
           ) : (
             (categoryKey === "DormitoryNotice" ||
-              categoryKey === "DormitoryEntryNotice") && (
+              categoryKey === "DormitoryEntryNotice" ||
+              categoryKey === "LibraryNotice") && (
               <View
                 style={{
                   borderColor: Color.red.gray[700],
@@ -146,36 +267,55 @@ const CategorySearchPage = ({ navigation }: { navigation: any }) => {
               >
                 <DropdownMenu
                   selectedCampus={selectedCampus}
-                  setSelectedCampus={setSelectedCampus}
+                  handleSelectedCampus={handleSelectedCampus}
                 />
               </View>
             )
           )}
-          {list.map((item, index) => {
-            return (
-              <CategoryItem
-                key={index}
-                item={item}
-                categoryKey={categoryKey}
-                updateList={updateList}
-              />
-            );
-          })}
-          {isSearch ? (
-            <CategoryBackButton
-              onPress={() => {
-                setIsSearch(false);
-                setSearch("");
-                setList(dummyCategory.items);
-                setPage(0);
-              }}
-            />
-          ) : (
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {list.map((item, index) => {
+              return (
+                <CategoryItem
+                  key={index}
+                  item={item}
+                  categoryKey={categoryKey}
+                  updateList={updateList}
+                />
+              );
+            })}
+            {isSearch && (
+              <View
+                style={{
+                  marginVertical: 75,
+                }}
+              >
+                <CategoryBackButton
+                  onPress={() => {
+                    setIsSearch(false);
+                    setSearch("");
+                    setSearchText("");
+                    setPage(0);
+                    setIsLoading(true);
+                  }}
+                />
+              </View>
+            )}
+          </ScrollView>
+          {!isSearch && (
             <Pagination page={page} setPage={setPage} totalSize={totalSize} />
           )}
-        </ScrollView>
+        </>
       ) : (
-        <CategoryEmpty searchText={searchText} />
+        <CategoryEmpty
+          searchText={searchText}
+          onPress={() => {
+            setIsSearch(false);
+            setSearch("");
+            setSearchText("");
+            setPage(0);
+            setIsLoading(true);
+          }}
+        />
       )}
     </View>
   );

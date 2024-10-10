@@ -611,7 +611,7 @@ import React, { useState, useEffect } from "react";
 import HomeHeader from "@/components/home/header/HomeHeader";
 import AlarmPage from "../Home/AlarmPage";
 import SearchPage from "../Home/SearchPage";
-import CategoryListPage from "../Category/CategoryListPage";
+import CategoryListPage from "../category/CategoryListPage";
 import Notice from "@/components/home/Notice";
 import { TCategoryList } from "@/types/category";
 import { Color } from "@/constants/Theme";

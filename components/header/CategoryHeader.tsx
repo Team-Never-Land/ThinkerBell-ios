@@ -6,6 +6,7 @@ import LogoIcon from "../../assets/images/icon/Logo.svg";
 import { Color, Font } from "@/constants/Theme";
 import SearchBar from "./SearchBar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useFocusEffect } from "expo-router";
 
 export default function CategoryHeader({
   navigation,
@@ -22,14 +23,23 @@ export default function CategoryHeader({
 }) {
   const { top } = useSafeAreaInsets();
 
+  useFocusEffect(
+    React.useCallback(() => {
+      StatusBar.setBarStyle("light-content");
+
+      return () => {};
+    }, [])
+  );
+
   return (
     <>
       <View style={{ height: top, backgroundColor: Color.BLUE }}></View>
       <StatusBar backgroundColor={Color.BLUE} barStyle="light-content" />
       <View
         style={{
-          paddingTop: 20,
           backgroundColor: Color.BLUE,
+          paddingTop: 20,
+          paddingBottom: 30,
         }}
       >
         <View
@@ -51,7 +61,11 @@ export default function CategoryHeader({
           >
             <MenuIcon />
           </Pressable>
-          <LogoIcon width={36} height={28} />
+          <LogoIcon
+            width={36}
+            height={28}
+            onPress={() => navigation.navigate("home")}
+          />
           <Pressable
             onPress={() => navigation.navigate("home")}
             style={{
