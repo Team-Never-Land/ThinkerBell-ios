@@ -1,10 +1,10 @@
 import { Color, Font } from "@/constants/Theme";
 import React, { useEffect, useState } from "react";
-import { View, ScrollView, Text } from "react-native";
-import { dummyFavorites } from "@/assets/data/dummyFavorites";
-import { TFavoritesListResponse, TYearMonthFavorites } from "@/types/favorites";
+import { View, ScrollView, Text, ActivityIndicator } from "react-native";
+import { TFavoritesScheduleList, TYearMonthFavorites } from "@/types/favorites";
 import FavoritesScheduleItem from "@/components/favorites/FavoritesScheduleItem";
 import FavoritesScheduleHeader from "@/components/header/FavoritesScheduleHeader";
+import { getBookmarkSchedule } from "@/service/bookmark/getBookmarkSchedule";
 
 const FavoritesSchedulePage = () => {
   const [scheduleList, setScheduleList] = useState<TYearMonthFavorites[]>([]); //즐겨찾기한 학사일정 목록
@@ -13,7 +13,7 @@ const FavoritesSchedulePage = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const processFavorites = (favorites: TFavoritesListResponse[]) => {
+    const processFavorites = (favorites: TFavoritesScheduleList[]) => {
       const yearMonthMap: TYearMonthFavorites = {};
 
       //연도 및 월에 따라 분류
@@ -64,8 +64,21 @@ const FavoritesSchedulePage = () => {
       setSelectedYearIndex(0);
     };
 
-    processFavorites(dummyFavorites);
-    setIsLoading(false);
+    const fetchData = async () => {
+      try {
+        const response = await getBookmarkSchedule();
+        if (response.code === 200) {
+          processFavorites(response.data);
+        }
+      } catch (error) {
+        console.error(error);
+        setScheduleList([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
   const updateList = (id: number) => {
@@ -101,55 +114,59 @@ const FavoritesSchedulePage = () => {
         backgroundColor: Color.WHITE,
       }}
     >
-      {!isLoading && (
-        <>
-          <FavoritesScheduleHeader
-            yearList={yearList}
-            selectedYearIndex={selectedYearIndex}
-            setSelectedYearIndex={setSelectedYearIndex}
-          />
-          <ScrollView showsVerticalScrollIndicator={false}>
-            <View style={{ paddingBottom: 100 }}>
-              {yearList &&
-                scheduleList
-                  .filter((yearObj) => {
-                    const year = Number(Object.keys(yearObj)[0]);
-                    return year.toString() === yearList[selectedYearIndex];
-                  })
-                  .map((yearObj) => {
-                    const year = Number(Object.keys(yearObj)[0]);
-                    const months = yearObj[year];
+      <FavoritesScheduleHeader
+        yearList={yearList}
+        selectedYearIndex={selectedYearIndex}
+        setSelectedYearIndex={setSelectedYearIndex}
+      />
+      {isLoading ? (
+        <ActivityIndicator
+          size="large"
+          color={Color.BLACK}
+          style={{ flex: 1, justifyContent: "center" }}
+        />
+      ) : (
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={{ paddingBottom: 100 }}>
+            {yearList &&
+              scheduleList
+                .filter((yearObj) => {
+                  const year = Number(Object.keys(yearObj)[0]);
+                  return year.toString() === yearList[selectedYearIndex];
+                })
+                .map((yearObj) => {
+                  const year = Number(Object.keys(yearObj)[0]);
+                  const months = yearObj[year];
 
-                    return Object.entries(months)
-                      .sort((a, b) => Number(b[0]) - Number(a[0]))
-                      .map(([month, items]) => (
-                        <View key={`${year}-${month}`}>
-                          <Text
-                            style={{
-                              ...Font.Pretendard500[14],
-                              color: Color.BLACK,
-                              marginTop: 28,
-                              marginBottom: 4,
-                              marginLeft: 22,
-                            }}
-                          >
-                            {month}월
-                          </Text>
-                          <View style={{ marginBottom: 12 }}>
-                            {items.map((item) => (
-                              <FavoritesScheduleItem
-                                key={item.id}
-                                item={item}
-                                updateList={updateList}
-                              />
-                            ))}
-                          </View>
+                  return Object.entries(months)
+                    .sort((a, b) => Number(b[0]) - Number(a[0]))
+                    .map(([month, items]) => (
+                      <View key={`${year}-${month}`}>
+                        <Text
+                          style={{
+                            ...Font.Pretendard500[14],
+                            color: Color.BLACK,
+                            marginTop: 28,
+                            marginBottom: 4,
+                            marginLeft: 22,
+                          }}
+                        >
+                          {month}월
+                        </Text>
+                        <View style={{ marginBottom: 12 }}>
+                          {items.map((item) => (
+                            <FavoritesScheduleItem
+                              key={item.id}
+                              item={item}
+                              updateList={updateList}
+                            />
+                          ))}
                         </View>
-                      ));
-                  })}
-            </View>
-          </ScrollView>
-        </>
+                      </View>
+                    ));
+                })}
+          </View>
+        </ScrollView>
       )}
     </View>
   );
