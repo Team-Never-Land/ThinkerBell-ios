@@ -13,6 +13,8 @@ const FavoritesSchedulePage = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const currentYear = new Date().getFullYear().toString();
+
     const processFavorites = (favorites: TFavoritesScheduleList[]) => {
       const yearMonthMap: TYearMonthFavorites = {};
 
@@ -59,9 +61,18 @@ const FavoritesSchedulePage = () => {
         })
       );
 
+      const sortedYears = Object.keys(yearMonthMap).sort();
+
       setScheduleList(yearMonthList);
-      setYearList(Object.keys(yearMonthMap).sort());
-      setSelectedYearIndex(0);
+      setYearList(sortedYears);
+
+      //현재 연도가 연도 목록에 포함되어 있으면 그 연도로 설정
+      const currentYearIndex = sortedYears.indexOf(currentYear);
+      if (currentYearIndex !== -1) {
+        setSelectedYearIndex(currentYearIndex);
+      } else {
+        setSelectedYearIndex(0);
+      }
     };
 
     const fetchData = async () => {
