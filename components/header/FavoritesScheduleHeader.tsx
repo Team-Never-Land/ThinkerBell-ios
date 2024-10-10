@@ -4,6 +4,7 @@ import { Color, Font } from "@/constants/Theme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BeforeIcon from "../../assets/images/icon/Arrow/Before.svg";
 import NextIcon from "../../assets/images/icon/Arrow/Next.svg";
+import { useFocusEffect } from "expo-router";
 
 export default function FavoritesScheduleHeader({
   yearList,
@@ -15,6 +16,14 @@ export default function FavoritesScheduleHeader({
   setSelectedYearIndex: React.Dispatch<React.SetStateAction<number>>;
 }) {
   const { top } = useSafeAreaInsets();
+
+  useFocusEffect(
+    React.useCallback(() => {
+      StatusBar.setBarStyle("light-content");
+
+      return () => {};
+    }, [])
+  );
 
   return (
     <>

@@ -6,6 +6,7 @@ import LogoIcon from "../../assets/images/icon/Logo.svg";
 import { Color, Font } from "@/constants/Theme";
 import SearchBar from "./SearchBar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useFocusEffect } from "expo-router";
 
 export default function CategoryHeader({
   navigation,
@@ -21,6 +22,14 @@ export default function CategoryHeader({
   onSearch: (search: string) => void;
 }) {
   const { top } = useSafeAreaInsets();
+
+  useFocusEffect(
+    React.useCallback(() => {
+      StatusBar.setBarStyle("light-content");
+
+      return () => {};
+    }, [])
+  );
 
   return (
     <>

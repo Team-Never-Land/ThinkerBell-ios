@@ -3,9 +3,18 @@ import { View, Text, StatusBar } from "react-native";
 import LogoIcon from "../../assets/images/icon/Logo.svg";
 import { Color, Font } from "@/constants/Theme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useFocusEffect } from "expo-router";
 
 export default function FavoritesHeader({ navigation }: { navigation: any }) {
   const { top } = useSafeAreaInsets();
+
+  useFocusEffect(
+    React.useCallback(() => {
+      StatusBar.setBarStyle("light-content");
+
+      return () => {};
+    }, [])
+  );
 
   return (
     <>
