@@ -37,8 +37,9 @@ export default function CategoryHeader({
       <StatusBar backgroundColor={Color.BLUE} barStyle="light-content" />
       <View
         style={{
-          paddingTop: 20,
           backgroundColor: Color.BLUE,
+          paddingTop: 20,
+          paddingBottom: 30,
         }}
       >
         <View
@@ -60,7 +61,11 @@ export default function CategoryHeader({
           >
             <MenuIcon />
           </Pressable>
-          <LogoIcon width={36} height={28} />
+          <LogoIcon
+            width={36}
+            height={28}
+            onPress={() => navigation.navigate("home")}
+          />
           <Pressable
             onPress={() => navigation.navigate("home")}
             style={{

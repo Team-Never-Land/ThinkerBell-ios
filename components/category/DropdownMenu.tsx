@@ -6,10 +6,10 @@ import { Color, Font } from "@/constants/Theme";
 
 export default function DropdownMenu({
   selectedCampus,
-  setSelectedCampus,
+  handleSelectedCampus,
 }: {
   selectedCampus: string;
-  setSelectedCampus: React.Dispatch<React.SetStateAction<string>>;
+  handleSelectedCampus: (campus: string) => void;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const list = ["전체", "인문", "자연"];
@@ -68,7 +68,7 @@ export default function DropdownMenu({
                 <Pressable
                   key={index}
                   onPress={() => {
-                    setSelectedCampus(data);
+                    handleSelectedCampus(data);
                     setIsOpen(false);
                   }}
                   style={{

@@ -1,7 +1,3 @@
-import {
-  dummyCategory,
-  dummyCategorySearch,
-} from "@/assets/data/dummyCategory";
 import CategoryBackButton from "@/components/category/CategoryBackButton";
 import CategoryItem from "@/components/category/CategoryItem";
 import CategoryEmpty from "@/components/category/CategoryEmpty";
@@ -28,6 +24,7 @@ import {
   getStudentActsNotice,
   getTeachingNotice,
 } from "@/service/getNotice";
+import { getSearchNotices } from "@/service/getSearchNotices";
 
 type CategorySearchRouteProp = RouteProp<
   { CategorySearch: { categoryText: string; categoryKey: TCategoryKey } },
@@ -40,6 +37,7 @@ const CategorySearchPage = ({ navigation }: { navigation: any }) => {
   const [page, setPage] = useState(0);
   const [totalSize, setTotalSize] = useState(0);
   const [list, setList] = useState<TCategoryList[]>([]);
+  const [searchList, setSearchList] = useState<TCategoryList[]>([]);
   const [pageInfo, setPageInfo] = useState({
     page: 0,
     size: 0,
@@ -55,7 +53,7 @@ const CategorySearchPage = ({ navigation }: { navigation: any }) => {
     const fetchData = async () => {
       try {
         let response;
-        if (categoryKey) {
+        if (categoryKey && !isSearch) {
           switch (categoryKey) {
             case "NormalNotice":
               response = await getNormalNotice(page);
@@ -113,12 +111,14 @@ const CategorySearchPage = ({ navigation }: { navigation: any }) => {
         console.error(error);
         setList([]);
       } finally {
-        setIsLoading(false);
+        if (!isSearch) {
+          setIsLoading(false);
+        }
       }
     };
 
     fetchData();
-  }, [page, selectedCampus]);
+  }, [page, selectedCampus, isSearch]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -127,14 +127,40 @@ const CategorySearchPage = ({ navigation }: { navigation: any }) => {
   }, [isLoading]);
 
   //검색
-  const onSearch = () => {
+  const onSearch = async () => {
     setSearchText(search);
     setIsSearch(true);
+    setIsLoading(true);
 
-    if (dummyCategorySearch[categoryKey]) {
-      setList(dummyCategorySearch[categoryKey]);
-    } else {
+    try {
+      const response = await getSearchNotices(search);
+      if (response.data[categoryKey]) {
+        if (
+          categoryKey === "DormitoryNotice" ||
+          categoryKey === "DormitoryEntryNotice" ||
+          categoryKey === "LibraryNotice"
+        ) {
+          setSearchList(response.data[categoryKey]);
+          handleSearchList(response.data[categoryKey], selectedCampus);
+        } else {
+          setList(response.data[categoryKey]);
+        }
+      } else {
+        setList([]);
+      }
+    } catch (error) {
+      console.error(error);
       setList([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSearchList = (searchLists: TCategoryList[], campus: string) => {
+    if (campus === "전체") {
+      setList(searchLists);
+    } else {
+      setList(searchLists.filter((item) => item.campus === campus));
     }
   };
 
@@ -144,6 +170,16 @@ const CategorySearchPage = ({ navigation }: { navigation: any }) => {
         item.id === id ? { ...item, marked: !item.marked } : item
       )
     );
+  };
+
+  const handleSelectedCampus = (campus: string) => {
+    setSelectedCampus(campus);
+    if (isSearch) {
+      handleSearchList(searchList, campus);
+    } else {
+      setIsLoading(true);
+      setPage(0);
+    }
   };
 
   return (
@@ -160,8 +196,14 @@ const CategorySearchPage = ({ navigation }: { navigation: any }) => {
         setSearch={setSearch}
         onSearch={onSearch}
       />
-      {list.length > 0 ? (
-        <ScrollView showsVerticalScrollIndicator={false}>
+      {isLoading ? (
+        <ActivityIndicator
+          size="large"
+          color={Color.BLACK}
+          style={{ flex: 1, justifyContent: "center" }}
+        />
+      ) : list.length > 0 ? (
+        <>
           {isSearch ? (
             <View
               style={{
@@ -192,17 +234,21 @@ const CategorySearchPage = ({ navigation }: { navigation: any }) => {
                   ‘{searchText}’이(가) 포함된 공지사항 ({list.length}개)
                 </Text>
               </View>
-              <View
-                style={{
-                  paddingTop: 13,
-                  paddingRight: 19,
-                }}
-              >
-                <DropdownMenu
-                  selectedCampus={selectedCampus}
-                  setSelectedCampus={setSelectedCampus}
-                />
-              </View>
+              {(categoryKey === "DormitoryNotice" ||
+                categoryKey === "DormitoryEntryNotice" ||
+                categoryKey === "LibraryNotice") && (
+                <View
+                  style={{
+                    paddingTop: 13,
+                    paddingRight: 19,
+                  }}
+                >
+                  <DropdownMenu
+                    selectedCampus={selectedCampus}
+                    handleSelectedCampus={handleSelectedCampus}
+                  />
+                </View>
+              )}
             </View>
           ) : (
             (categoryKey === "DormitoryNotice" ||
@@ -221,42 +267,55 @@ const CategorySearchPage = ({ navigation }: { navigation: any }) => {
               >
                 <DropdownMenu
                   selectedCampus={selectedCampus}
-                  setSelectedCampus={setSelectedCampus}
+                  handleSelectedCampus={handleSelectedCampus}
                 />
               </View>
             )
           )}
-          {list.map((item, index) => {
-            return (
-              <CategoryItem
-                key={index}
-                item={item}
-                categoryKey={categoryKey}
-                updateList={updateList}
-              />
-            );
-          })}
-          {isSearch ? (
-            <CategoryBackButton
-              onPress={() => {
-                setIsSearch(false);
-                setSearch("");
-                setList(dummyCategory.items);
-                setPage(0);
-              }}
-            />
-          ) : (
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {list.map((item, index) => {
+              return (
+                <CategoryItem
+                  key={index}
+                  item={item}
+                  categoryKey={categoryKey}
+                  updateList={updateList}
+                />
+              );
+            })}
+            {isSearch && (
+              <View
+                style={{
+                  marginVertical: 75,
+                }}
+              >
+                <CategoryBackButton
+                  onPress={() => {
+                    setIsSearch(false);
+                    setSearch("");
+                    setSearchText("");
+                    setPage(0);
+                    setIsLoading(true);
+                  }}
+                />
+              </View>
+            )}
+          </ScrollView>
+          {!isSearch && (
             <Pagination page={page} setPage={setPage} totalSize={totalSize} />
           )}
-        </ScrollView>
-      ) : isLoading ? (
-        <ActivityIndicator
-          size="large"
-          color={Color.BLACK}
-          style={{ flex: 1, justifyContent: "center" }}
-        />
+        </>
       ) : (
-        <CategoryEmpty searchText={searchText} />
+        <CategoryEmpty
+          searchText={searchText}
+          onPress={() => {
+            setIsSearch(false);
+            setSearch("");
+            setSearchText("");
+            setPage(0);
+            setIsLoading(true);
+          }}
+        />
       )}
     </View>
   );

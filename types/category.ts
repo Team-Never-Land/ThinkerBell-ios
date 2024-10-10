@@ -36,6 +36,13 @@ export type TCategoryList = {
   read: boolean;
 };
 
+export type TCategorySearchResponse = {
+  code: number;
+  status: string;
+  message: string;
+  data: TCategorySearch;
+};
+
 export type TCategorySearch = {
   [key in TCategoryKey]?: TCategoryList[];
 };

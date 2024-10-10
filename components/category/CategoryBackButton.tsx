@@ -11,7 +11,6 @@ export default function CategoryBackButton({
     <View
       style={{
         alignItems: "center",
-        marginTop: 75,
       }}
     >
       <Pressable
