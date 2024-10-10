@@ -1,10 +1,11 @@
 import { Color } from "@/constants/Theme";
-import React, { useEffect, useState } from "react";
-import { View, ScrollView } from "react-native";
+import React, { useState } from "react";
+import { View, ScrollView, ActivityIndicator } from "react-native";
 import { TCategoryKey, TCategorySearch } from "@/types/category";
 import CategoryItem from "@/components/category/CategoryItem";
-import { dummyFavoritesNotice } from "@/assets/data/dummyFavorites";
 import FavoritesNoticeHeader from "@/components/header/FavoritesNoticeHeader";
+import { getBookmarkNotice } from "@/service/bookmark/getBookmarkNotice";
+import { useFocusEffect } from "expo-router";
 
 const FavoritesNoticePage = () => {
   const [noticelist, setNoticeList] = useState<TCategorySearch>({}); //즐겨찾기한 공지사항 목록
@@ -13,16 +14,33 @@ const FavoritesNoticePage = () => {
     useState<TCategoryKey | null>(null); //선택한 카테고리
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    setNoticeList(dummyFavoritesNotice);
-    const keys = Object.keys(dummyFavoritesNotice) as TCategoryKey[];
-    setCategoryKeyList(keys);
+  useFocusEffect(
+    React.useCallback(() => {
+      setIsLoading(true);
+      const fetchData = async () => {
+        try {
+          const response = await getBookmarkNotice();
+          if (response.code === 200) {
+            setNoticeList(response.data);
 
-    if (keys.length > 0) {
-      setSelectedCategoryKey(keys[0]);
-    }
-    setIsLoading(false);
-  }, []);
+            const keys = Object.keys(response.data) as TCategoryKey[];
+            setCategoryKeyList(keys);
+
+            if (keys.length > 0) {
+              setSelectedCategoryKey(keys[0]);
+            }
+          }
+        } catch (error) {
+          console.error(error);
+          setNoticeList({});
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      fetchData();
+    }, [])
+  );
 
   const updateList = (id: number) => {
     setNoticeList((prevList) => {
@@ -47,28 +65,32 @@ const FavoritesNoticePage = () => {
         backgroundColor: Color.WHITE,
       }}
     >
-      {!isLoading && (
-        <>
-          <FavoritesNoticeHeader
-            categoryKeyList={categoryKeyList}
-            selectedCategoryKey={selectedCategoryKey}
-            setSelectedCategoryKey={setSelectedCategoryKey}
-          />
-          <ScrollView showsVerticalScrollIndicator={false}>
-            <View style={{ paddingBottom: 100 }}>
-              {selectedCategoryKey &&
-                noticelist[selectedCategoryKey] &&
-                noticelist[selectedCategoryKey].map((item, index) => (
-                  <CategoryItem
-                    key={index}
-                    item={item}
-                    categoryKey={selectedCategoryKey}
-                    updateList={updateList}
-                  />
-                ))}
-            </View>
-          </ScrollView>
-        </>
+      <FavoritesNoticeHeader
+        categoryKeyList={categoryKeyList}
+        selectedCategoryKey={selectedCategoryKey}
+        setSelectedCategoryKey={setSelectedCategoryKey}
+      />
+      {isLoading ? (
+        <ActivityIndicator
+          size="large"
+          color={Color.BLACK}
+          style={{ flex: 1, justifyContent: "center" }}
+        />
+      ) : (
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={{ paddingBottom: 100 }}>
+            {selectedCategoryKey &&
+              noticelist[selectedCategoryKey] &&
+              noticelist[selectedCategoryKey].map((item, index) => (
+                <CategoryItem
+                  key={index}
+                  item={item}
+                  categoryKey={selectedCategoryKey}
+                  updateList={updateList}
+                />
+              ))}
+          </View>
+        </ScrollView>
       )}
     </View>
   );

@@ -47,8 +47,6 @@ const FavoritesPage = ({ navigation }: { navigation: any }) => {
       };
 
       fetchData();
-
-      return () => {};
     }, [])
   );
 
@@ -100,7 +98,7 @@ const FavoritesPage = ({ navigation }: { navigation: any }) => {
             onPress={() => navigation.navigate("FavoritesNotice")}
           />
           {noticelist.length > 0 ? (
-            noticelist.map((item, index) => {
+            noticelist.slice(0, 3).map((item, index) => {
               return <FavoritesNoticeItem key={index} item={item} />;
             })
           ) : (
