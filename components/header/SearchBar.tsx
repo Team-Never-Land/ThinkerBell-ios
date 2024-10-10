@@ -22,7 +22,7 @@ export default function SearchBar({
             type: "success",
             text1: "2글자 이상 입력해주세요",
             position: "bottom",
-            visibilityTime: 1500,
+            visibilityTime: 1000,
             autoHide: true,
           });
         }

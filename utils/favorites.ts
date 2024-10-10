@@ -1,3 +1,5 @@
+import { deleteBookmark } from "@/service/bookmark/deleteBookmark";
+import { postBookmark } from "@/service/bookmark/postBookmark";
 import Toast from "react-native-toast-message";
 
 //즐겨찾기
@@ -17,37 +19,41 @@ export const onMarkedPress = (
 };
 
 //즐겨찾기 추가
-const addToFavorites = (
+const addToFavorites = async (
   id: number,
   category: string,
   updateList: (id: number) => void
 ) => {
-  Toast.show({
-    type: "success",
-    text1: "즐겨찾기 되었습니다!",
-    position: "bottom",
-    visibilityTime: 1500,
-    autoHide: true,
-  });
+  const response = await postBookmark(category, id);
 
-  console.log(category);
-  updateList(id);
+  if (response.code === 200) {
+    updateList(id);
+    Toast.show({
+      type: "success",
+      text1: "즐겨찾기 되었습니다!",
+      position: "bottom",
+      visibilityTime: 1000,
+      autoHide: true,
+    });
+  }
 };
 
 //즐겨찾기 삭제
-const removeFromFavorites = (
+const removeFromFavorites = async (
   id: number,
   category: string,
   updateList: (id: number) => void
 ) => {
-  Toast.show({
-    type: "success",
-    text1: "삭제 되었습니다.",
-    position: "bottom",
-    visibilityTime: 1500,
-    autoHide: true,
-  });
+  const response = await deleteBookmark(category, id);
 
-  console.log(category);
-  updateList(id);
+  if (response.code === 200) {
+    updateList(id);
+    Toast.show({
+      type: "success",
+      text1: "삭제 되었습니다.",
+      position: "bottom",
+      visibilityTime: 1000,
+      autoHide: true,
+    });
+  }
 };
