@@ -12,7 +12,22 @@ import { Color, Font } from "@/constants/Theme";
 import { TCategoryKey, TCategoryList } from "@/types/category";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { ScrollView, View, Text } from "react-native";
+import { ScrollView, View, Text, ActivityIndicator } from "react-native";
+import {
+  getAcademicNotice,
+  getBiddingNotice,
+  getCareerNotice,
+  getDormitoryEntryNotice,
+  getDormitoryNotice,
+  getEventNotice,
+  getLibraryNotice,
+  getNormalNotice,
+  getRevisionNotice,
+  getSafetyNotice,
+  getScholarshipNotice,
+  getStudentActsNotice,
+  getTeachingNotice,
+} from "@/service/getNotice";
 
 type CategorySearchRouteProp = RouteProp<
   { CategorySearch: { categoryText: string; categoryKey: TCategoryKey } },
@@ -37,14 +52,73 @@ const CategorySearchPage = ({ navigation }: { navigation: any }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setList(dummyCategory.items);
-    setPageInfo({
-      page: dummyCategory.page,
-      size: dummyCategory.size,
-      totalItems: dummyCategory.totalItems,
-    });
-    setIsLoading(false);
-  }, [page]);
+    const fetchData = async () => {
+      try {
+        let response;
+        if (categoryKey) {
+          switch (categoryKey) {
+            case "NormalNotice":
+              response = await getNormalNotice(page);
+              break;
+            case "AcademicNotice":
+              response = await getAcademicNotice(page);
+              break;
+            case "EventNotice":
+              response = await getEventNotice(page);
+              break;
+            case "ScholarshipNotice":
+              response = await getScholarshipNotice(page);
+              break;
+            case "CareerNotice":
+              response = await getCareerNotice(page);
+              break;
+            case "StudentActsNotice":
+              response = await getStudentActsNotice(page);
+              break;
+            case "BiddingNotice":
+              response = await getBiddingNotice(page);
+              break;
+            case "SafetyNotice":
+              response = await getSafetyNotice(page);
+              break;
+            case "RevisionNotice":
+              response = await getRevisionNotice(page);
+              break;
+            case "DormitoryNotice":
+              response = await getDormitoryNotice(page, selectedCampus);
+              break;
+            case "DormitoryEntryNotice":
+              response = await getDormitoryEntryNotice(page, selectedCampus);
+              break;
+            case "LibraryNotice":
+              response = await getLibraryNotice(page, selectedCampus);
+              break;
+            case "TeachingNotice":
+              response = await getTeachingNotice(page);
+              break;
+            default:
+              response = await getNormalNotice(page);
+              break;
+          }
+          if (response.code === 200) {
+            setList(response.data.items);
+            setPageInfo({
+              page: response.data.page,
+              size: response.data.size,
+              totalItems: response.data.totalItems,
+            });
+          }
+        }
+      } catch (error) {
+        console.error(error);
+        setList([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [page, selectedCampus]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -132,7 +206,8 @@ const CategorySearchPage = ({ navigation }: { navigation: any }) => {
             </View>
           ) : (
             (categoryKey === "DormitoryNotice" ||
-              categoryKey === "DormitoryEntryNotice") && (
+              categoryKey === "DormitoryEntryNotice" ||
+              categoryKey === "LibraryNotice") && (
               <View
                 style={{
                   borderColor: Color.red.gray[700],
@@ -174,6 +249,12 @@ const CategorySearchPage = ({ navigation }: { navigation: any }) => {
             <Pagination page={page} setPage={setPage} totalSize={totalSize} />
           )}
         </ScrollView>
+      ) : isLoading ? (
+        <ActivityIndicator
+          size="large"
+          color={Color.BLACK}
+          style={{ flex: 1, justifyContent: "center" }}
+        />
       ) : (
         <CategoryEmpty searchText={searchText} />
       )}

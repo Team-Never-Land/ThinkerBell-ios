@@ -1,6 +1,7 @@
 import axios from "axios";
 import { getOrCreateUUID } from "../utils/uuid-function";
 import * as Notifications from "expo-notifications"; // Expo 푸시 알림
+import { BASE_URL } from "./apiClient";
 
 // Define types for push token and response
 interface PushTokenData {
@@ -29,13 +30,11 @@ export async function registerDeviceInfo(): Promise<void> {
     console.log(`Push notification token retrieved: ${deviceToken}`);
 
     // 3. 서버에 UUID와 Device Token 전송
-    const response = await axios.post(
-      "https://thinkerbell.shop/api/user-info/save",
-      {
-        uuid: uuid,
-        deviceToken: deviceToken,
-      }
-    );
+    const response = await axios.post(`${BASE_URL}/api/user-info/save`, {
+      ssaid: uuid,
+      deviceToken: deviceToken,
+      alarmEnabled: status === "granted",
+    });
 
     if (response.status === 200) {
       console.log("Device info saved successfully");

@@ -1,9 +1,11 @@
 import axios from "axios";
 import { getOrCreateUUID } from "../utils/uuid-function"; // UUID 생성 및 저장 함수 가져오기
 
+export const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+
 // Axios 인스턴스 생성
 const apiClient = axios.create({
-  baseURL: "https://thinkerbell.shop/api", // API 기본 URL 설정
+  baseURL: BASE_URL, // API 기본 URL 설정
 });
 
 // Axios 인터셉터 설정: 모든 요청에 UUID 포함
