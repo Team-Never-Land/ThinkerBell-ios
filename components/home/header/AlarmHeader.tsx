@@ -4,401 +4,124 @@ import { Color, Font } from "@/constants/Theme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TCategoryKey, TCategoryList } from "@/types/category";
 import { dummyCategorySearch } from "@/assets/data/dummyCategory";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import DotIcon from "../../../assets/images/icon/Etc/Dot.svg";
 import LogoIcon from "@/assets/images/icon/Logo.svg";
 import * as Notifications from "expo-notifications";
+import { getKeywords } from "@/service/keyword/getKeywords";
+import { getNoticesByKeyword } from "@/service/alarm/getNoticesByKeyword";
+import CategoryItem from "@/components/category/CategoryItem";
+import AlarmCategoryItem from "../AlarmCategoryItem";
+import { getCheckUnreadAlarmByKeyword } from "@/service/alarm/getCheckUnreadAlarmByKeyword";
+
+// NoticeItem 타입 정의
+type NoticeItem = {
+  id: number;
+  title: string;
+  noticeTypeKorean: string;
+  noticeTypeEnglish: string;
+  pubDate: string;
+  viewed: boolean;
+  url: string;
+  marked: boolean;
+};
 
 export default function AlarmHeader({
-  onFilterNotices,
   navigation,
+  onFilterNotices,
+  updateUnreadStatus,
 }: {
-  onFilterNotices: (notices: TCategoryList[], category: string) => void;
   navigation: any;
+  onFilterNotices: (notices: NoticeItem[]) => void;
+  updateUnreadStatus: (unreadKeywords: { [key: string]: boolean }) => void;
 }) {
   const { top } = useSafeAreaInsets();
-  const [selectedCategory, setSelectedCategory] = useState<string>("키워드"); // 선택된 카테고리 상태
-  const [unreadCategories, setUnreadCategories] = useState<{
+  const [selectedKeyword, setSelectedKeyword] = useState<string>("");
+  const [unreadKeywords, setUnreadKeywords] = useState<{
     [key: string]: boolean;
-  }>({
-    키워드: false,
-    입사신청: false,
-    장학금: false,
-    공모전: false,
-  }); // 카테고리별 읽지 않은 공지 상태
-  const [savedKeywords, setSavedKeywords] = useState<string[]>([]); // AsyncStorage에서 불러온 키워드 저장
+  }>({});
+  const [filteredNotices, setFilteredNotices] = useState<NoticeItem[]>([]); // 필터링된 공지사항 목록
 
-  const categories = ["키워드", "입사신청", "장학금", "공모전"];
-  const keyMap: { [key: string]: TCategoryKey | string } = {
-    키워드: "keyword",
-    입사신청: "DormitoryEntryNotice",
-    장학금: "ScholarshipNotice",
-    공모전: "CompetitionNotice",
-  };
+  const [keywords, setKeywords] = useState<string[]>([]); // 서버에서 가져온 키워드 목록
 
-  // 카테고리별로 빨간 점의 위치를 정의
-  const dotPositions: { [key: string]: number } = {
-    키워드: 45,
-    입사신청: 60,
-    장학금: 45,
-    공모전: 45,
-  };
-
-  // 읽음 상태 확인
-  const checkUnreadNotices = async (
-    category: string,
-    notices: TCategoryList[]
-  ) => {
-    const storageKey = `${category}_viewed`;
-    let viewedNotices = await getNoticesArray(storageKey);
-
-    // 중복 제거 및 상태 출력
-    viewedNotices = [...new Set(viewedNotices)];
-    console.log(`불러온 읽음 상태: ${viewedNotices.join(",")}`);
-
-    // 기존 필터링된 데이터를 기반으로 읽음 상태를 계산
-    const unreadNotices = notices.filter(
-      (notice) => !viewedNotices.includes(notice.id)
-    );
-
-    // 읽지 않은 공지가 있으면 상태 업데이트
-    setUnreadCategories((prev) => ({
-      ...prev,
-      [category]: unreadNotices.length > 0,
-    }));
-  };
-
-  const loadSavedKeywords = async () => {
+  const loadKeywordsAndCheckAlarms = async () => {
     try {
-      const storedKeywords = await AsyncStorage.getItem("keywords");
-      if (storedKeywords) {
-        setSavedKeywords(JSON.parse(storedKeywords));
-      } else {
-        setSavedKeywords([]); // 저장된 키워드가 없을 경우 빈 배열
+      const keywordList = await getKeywords(); // API에서 키워드 목록 가져오기
+      const extractedKeywords = keywordList.map(
+        (item: { keyword: string }) => item.keyword
+      );
+      setKeywords(extractedKeywords); // 가져온 키워드를 상태로 저장
+      if (extractedKeywords.length > 0) {
+        setSelectedKeyword(extractedKeywords[0]); // 첫 번째 키워드를 기본 선택값으로 설정
+        const notices = await filterNoticesByKeyword(extractedKeywords[0]); // 첫 번째 키워드로 공지 필터링
+        onFilterNotices(notices); // 필터링된 공지사항 전달
       }
+      // 각 키워드에 대해 미확인 알람 확인
+      const unreadStatus: { [key: string]: boolean } = {};
+      for (const keyword of extractedKeywords) {
+        const hasUnread = await getCheckUnreadAlarmByKeyword(keyword); // API 호출로 미확인 알람 여부 확인
+        unreadStatus[keyword] = hasUnread;
+      }
+      setUnreadKeywords(unreadStatus); // 키워드별 읽지 않은 알림 상태 설정
+      updateUnreadStatus(unreadStatus);
     } catch (error) {
-      console.error("저장된 키워드 불러오기 오류:", error);
+      console.error("Error loading keywords or checking unread alarms:", error);
     }
   };
 
-  useEffect(() => {
-    loadSavedKeywords(); // 컴포넌트가 마운트될 때 키워드 로드
-  }, []);
+  // const updateUnreadStatus = async (keyword: string) => {
+  //   const hasUnread = await getCheckUnreadAlarmByKeyword(keyword);
+  //   setUnreadKeywords((prevStatus) => ({
+  //     ...prevStatus,
+  //     [keyword]: hasUnread, // 해당 키워드의 읽음 상태 즉시 반영
+  //   }));
+  // };
 
-  const getNoticesArray = async (key: string) => {
+  const handleKeywordSelect = async (keyword: string) => {
+    setSelectedKeyword(keyword);
+    // 키워드로 공지사항 필터링 후 상위 컴포넌트로 전달
+    const notices = await filterNoticesByKeyword(keyword);
+    onFilterNotices(notices);
+  };
+  useEffect(() => {
+    loadKeywordsAndCheckAlarms(); // 컴포넌트가 마운트될 때 키워드 목록 로드
+  }, [keywords]);
+
+  const filterNoticesByKeyword = async (keyword: string) => {
     try {
-      const existingNotices = await AsyncStorage.getItem(key);
-      return existingNotices ? JSON.parse(existingNotices) : [];
+      const notices = await getNoticesByKeyword(keyword); // 서버에서 해당 키워드로 공지사항 조회
+      return notices; // 필터링된 공지를 반환
     } catch (error) {
-      console.error(error);
+      console.error("Error filtering notices by keyword:", error);
       return [];
     }
   };
-
-  const getCategoryName = (key: TCategoryKey | string) => {
-    switch (key) {
-      case "NormalNotice":
-        return "[일반공지]";
-      case "AcademicNotice":
-        return "[학사공지]";
-      case "EventNotice":
-        return "[행사공지]";
-      case "ScholarshipNotice":
-        return "[장학/학자금공지]";
-      case "CareerNotice":
-        return "[진로/취업/창업공지]";
-      case "StudentActsNotice":
-        return "[학생활동공지]";
-      case "BiddingNotice":
-        return "[입찰공지]";
-      case "SafetyNotice":
-        return "[대학안전공지]";
-      case "RevisionNotice":
-        return "[학칙개정 사전공고]";
-      case "DormitoryNotice":
-        return "[생활관] 공지사항";
-      case "DormitoryEntryNotice":
-        return "[생활관] 입퇴사 공지사항";
-      case "LibraryNotice":
-        return "[도서관] 공지사항";
-      case "TeachingNotice":
-        return "[교직] 공지사항";
-      default:
-        return "[기타공지]";
-    }
-  };
-
-  const filterByKeywords = (keywords: string[], category: string) => {
-    const results: TCategoryList[] = [];
-
-    Object.keys(dummyCategorySearch).forEach((key) => {
-      const categoryKey = key as TCategoryKey;
-      const notices = dummyCategorySearch[categoryKey] || [];
-
-      keywords.forEach((keyword) => {
-        const filteredNotices = notices.filter((notice) =>
-          notice.title.includes(keyword)
-        );
-
-        results.push(...filteredNotices);
-      });
-    });
-
-    return results;
-  };
-
-  const handleCategorySelect = async (category: string) => {
-    let notices: TCategoryList[] = [];
-    let categoryKey = `notice_${category}`;
-
-    // 키워드 및 공모전 필터링
-    if (category === "키워드") {
-      notices = filterByKeywords(savedKeywords, category);
-      categoryKey = `키워드`;
-    } else if (category === "공모전") {
-      notices = filterByKeywords(["공모전"], category);
-      categoryKey = `공모전`;
-    } else if (category === "입사신청" || category === "장학금") {
-      const categoryKeyFromMap = keyMap[category] as TCategoryKey;
-      notices = dummyCategorySearch[categoryKeyFromMap] || [];
-      categoryKey = category;
-    }
-
-    // 공지를 올바르게 가져온 경우에만 처리
-    if (notices.length === 0) {
-      console.log(`카테고리 ${category}에 필터링된 공지가 없습니다.`);
-      setSelectedCategory(category);
-      onFilterNotices([], category);
-      return; // 빈 결과일 때 필터링 로직 종료
-    }
-
-    const storageKey = `${categoryKey}_viewed`;
-    const viewedNotices = await getNoticesArray(storageKey);
-
-    const updatedNotices = notices.map((notice) => ({
-      ...notice,
-      read: viewedNotices.includes(notice.id),
-    }));
-
-    const hasUnread = updatedNotices.some((notice) => !notice.read);
-
-    setUnreadCategories((prev) => ({
-      ...prev,
-      [category]: hasUnread,
-    }));
-
-    // 필터링된 공지 개수와 읽지 않은 공지 개수 출력
-    console.log(
-      `카테고리: ${category}, 필터링된 공지 개수: ${
-        updatedNotices.length
-      }, 읽지 않은 공지 개수: ${updatedNotices.filter((n) => !n.read).length}`
-    );
-
-    setSelectedCategory(category);
-    onFilterNotices(updatedNotices, category);
-
-    // 알림을 위해 체크
-    checkForNewNotices();
-  };
-
-  async function sendPushNotification(
-    token: string,
-    keyword: string,
-    title: string,
-    category: string
-  ) {
-    const message = {
-      to: token,
-      sound: "default",
-      title: `띵~🔔 **${keyword}**와(과) 관련한 공지가 올라왔어요!`,
-      body: `[${category}] ${title.slice(0, 50)}...`, // 공지 제목 50자까지 표시
-      data: { someData: "goes here" },
-    };
-
-    console.log("푸시 알림 전송 준비:", message);
-
-    const response = await fetch("https://exp.host/--/api/v2/push/send", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(message),
-    });
-    const data = await response.json();
-    console.log("푸시 알림 응답:", data);
-  }
-
-  // 카테고리 및 키워드 필터링 후 알림 보내기
-  const checkForNewNotices = async () => {
-    const token = await AsyncStorage.getItem("expoPushToken");
-    const isNotificationEnabled = await AsyncStorage.getItem(
-      "notificationEnabled"
-    );
-
-    //console.log("알림 상태 확인:", { isNotificationEnabled, token });
-
-    if (isNotificationEnabled === "true" && token) {
-      // 각 카테고리의 필터링된 공지 목록 가져오기
-      for (const category of categories) {
-        const filteredNotices = filterByKeywords(savedKeywords, category);
-
-        // 필터링된 공지가 있을 때 푸시 알림 발송
-        filteredNotices.forEach((notice) => {
-          const categoryName = getCategoryName(
-            keyMap[category] as TCategoryKey
-          );
-          const keyword =
-            savedKeywords.find((kw) => notice.title.includes(kw)) || ""; // 키워드 찾기
-
-          // console.log("알림 전송 준비:", {
-          //   token,
-          //   keyword,
-          //   title: notice.title,
-          //   categoryName,
-          // });
-
-          // sendPushNotification(token!, keyword, notice.title, categoryName);
-        });
-      }
-    }
-  };
-
-  // useEffect(() => {
-  //   const checkAllCategories = async () => {
-  //     // 모든 카테고리를 순회하며 읽지 않은 공지를 체크
-  //     for (const category of categories) {
-  //       const categoryKeyFromMap = keyMap[category] as TCategoryKey;
-  //       const notices = dummyCategorySearch[categoryKeyFromMap] || [];
-
-  //       if (notices.length > 0) {
-  //         await checkUnreadNotices(category, notices); // 각 카테고리별 읽지 않은 공지 체크
-  //       }
-  //     }
+  // async function sendPushNotification(
+  //   token: string,
+  //   keyword: string,
+  //   title: string,
+  //   category: string
+  // ) {
+  //   const message = {
+  //     to: token,
+  //     sound: "default",
+  //     title: `띵~🔔 **${keyword}**와(과) 관련한 공지가 올라왔어요!`,
+  //     body: `[${category}] ${title.slice(0, 50)}...`, // 공지 제목 50자까지 표시
+  //     data: { someData: "goes here" },
   //   };
 
-  //   checkAllCategories(); // 페이지 로드 시 모든 카테고리의 읽지 않은 공지를 탐지
+  //   console.log("푸시 알림 전송 준비:", message);
 
-  //   const interval = setInterval(checkAllCategories, 3000); // 3초마다 다시 체크
-  //   return () => clearInterval(interval); // 컴포넌트 언마운트 시 타이머 해제
-  // }, []);
-
-  // 이 아래꺼가 잘됨.
-  // useEffect(() => {
-  //   // 페이지가 로드될 때 키워드 및 공모전 필터링
-  //   const initialFilter = async () => {
-  //     for (const category of categories) {
-  //       let notices: TCategoryList[] = [];
-
-  //       // 키워드 및 공모전 필터링
-  //       if (category === "키워드") {
-  //         notices = filterByKeywords(savedKeywords, category);
-  //       } else if (category === "공모전") {
-  //         notices = filterByKeywords(["공모전"], category);
-  //       } else if (category === "입사신청" || category === "장학금") {
-  //         const categoryKeyFromMap = keyMap[category] as TCategoryKey;
-  //         notices = dummyCategorySearch[categoryKeyFromMap] || [];
-  //       }
-
-  //       if (notices.length > 0) {
-  //         // 필터링된 공지사항이 있을 때 읽음 상태를 업데이트
-  //         const storageKey = `${category}_viewed`;
-  //         const viewedNotices = await getNoticesArray(storageKey);
-
-  //         const unreadNotices = notices.filter(
-  //           (notice) => !viewedNotices.includes(notice.id)
-  //         );
-
-  //         // 읽지 않은 공지가 있으면 빨간 점 표시
-  //         setUnreadCategories((prev) => ({
-  //           ...prev,
-  //           [category]: unreadNotices.length > 0,
-  //         }));
-  //       }
-  //     }
-  //   };
-
-  //   // 페이지 로드 시 필터링 및 읽음 상태 확인
-  //   initialFilter();
-
-  //   // 주기적으로 확인하여 새로운 공지가 있는지 확인
-  //   const interval = setInterval(initialFilter, 3000);
-  //   return () => clearInterval(interval);
-  // }, [savedKeywords]);
-
-  useEffect(() => {
-    const initialFilter = async () => {
-      const storedKeywords = await AsyncStorage.getItem("keywords");
-      const parsedKeywords = storedKeywords ? JSON.parse(storedKeywords) : [];
-
-      if (parsedKeywords.length > 0) {
-        for (const category of categories) {
-          let notices: TCategoryList[] = [];
-
-          // 키워드 필터링
-          if (category === "키워드") {
-            notices = filterByKeywords(parsedKeywords, category);
-          } else if (category === "공모전") {
-            notices = filterByKeywords(["공모전"], category);
-          } else if (category === "입사신청" || category === "장학금") {
-            const categoryKeyFromMap = keyMap[category] as TCategoryKey;
-            notices = dummyCategorySearch[categoryKeyFromMap] || [];
-          }
-
-          if (notices.length > 0) {
-            const storageKey = `${category}_viewed`;
-            const viewedNotices = await getNoticesArray(storageKey);
-
-            const unreadNotices = notices.filter(
-              (notice) => !viewedNotices.includes(notice.id)
-            );
-
-            // 읽지 않은 공지가 있으면 빨간 점 표시
-            setUnreadCategories((prev) => ({
-              ...prev,
-              [category]: unreadNotices.length > 0,
-            }));
-          }
-        }
-      }
-    };
-
-    // 앱이 실행되기 전에도 키워드 필터링을 수행
-    initialFilter();
-
-    // 주기적으로 공지 사항을 확인하여 업데이트
-    const interval = setInterval(initialFilter, 3000);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    // 키워드 로드가 완료된 후에 카테고리 선택 로직 실행
-    if (savedKeywords.length > 0) {
-      handleCategorySelect("키워드"); // 처음 로드 시 "키워드" 카테고리로 필터링
-    }
-  }, [savedKeywords]); // savedKeywords가 로드된 후에 실행
-
-  const saveViewedNotice = async (category: string, noticeId: number) => {
-    const storageKey = `${category}_viewed`;
-    let viewedNotices = await getNoticesArray(storageKey);
-
-    // 중복된 공지 ID가 추가되지 않도록 확인
-    if (!viewedNotices.includes(noticeId)) {
-      viewedNotices.push(noticeId);
-      await AsyncStorage.setItem(storageKey, JSON.stringify(viewedNotices));
-      console.log(`공지 ${noticeId} 읽음 상태 저장됨: ${viewedNotices}`);
-    }
-  };
-
-  const handleNoticeClick = async (category: string, noticeId: number) => {
-    // 공지를 클릭했을 때 읽음 상태로 저장
-    await saveViewedNotice(category, noticeId);
-
-    // 클릭 후 읽지 않은 공지 상태 다시 확인
-    let notices: TCategoryList[] =
-      dummyCategorySearch[keyMap[category] as TCategoryKey] || [];
-    await checkUnreadNotices(category, notices);
-  };
+  //   const response = await fetch("https://exp.host/--/api/v2/push/send", {
+  //     method: "POST",
+  //     headers: {
+  //       Accept: "application/json",
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(message),
+  //   });
+  //   const data = await response.json();
+  //   console.log("푸시 알림 응답:", data);
+  // }
 
   return (
     <>
@@ -473,44 +196,35 @@ export default function AlarmHeader({
               alignItems: "center",
             }}
           >
-            {categories.map((category, index) => (
+            {keywords.map((keyword, index) => (
               <Pressable
                 key={index}
-                onPress={() => handleCategorySelect(category)}
+                onPress={() => handleKeywordSelect(keyword)}
                 style={{
                   marginRight: 40,
+                  borderBottomWidth: selectedKeyword === keyword ? 2 : 0, // 선택된 키워드만 밑줄
+                  borderBottomColor: Color.WHITE,
+                  marginTop: selectedKeyword === keyword ? 3 : 0,
                 }}
               >
                 <Text
                   style={{
+                    borderBottomWidth: selectedKeyword === keyword ? 1 : 0,
+                    borderBottomColor: Color.WHITE,
                     color:
-                      selectedCategory === category
-                        ? Color.WHITE
-                        : Color.Grey[1],
+                      selectedKeyword === keyword ? Color.WHITE : Color.Grey[1],
                     ...Font.Label.Medium,
                   }}
                 >
-                  {category}
+                  {keyword}
                 </Text>
 
-                {unreadCategories[category] && (
+                {unreadKeywords[keyword] && ( // 읽지 않은 알림이 있으면 빨간 점 표시
                   <DotIcon
                     style={{
                       position: "absolute",
                       top: 0,
-                      left: dotPositions[category], // 카테고리별 빨간 점 위치 지정
-                    }}
-                  />
-                )}
-                {selectedCategory === category && (
-                  <View
-                    style={{
-                      width: category === "입사신청" ? 55 : 42,
-                      borderRadius: 1,
-                      borderWidth: 1,
-                      borderColor: Color.WHITE,
-                      opacity: 1,
-                      marginTop: -2,
+                      right: -5,
                     }}
                   />
                 )}
@@ -518,18 +232,6 @@ export default function AlarmHeader({
             ))}
           </ScrollView>
         </View>
-      </View>
-
-      {/* 공지사항 리스트 부분 */}
-      <View>
-        {dummyCategorySearch[keyMap[selectedCategory] as TCategoryKey]?.map(
-          (notice) => (
-            <Pressable
-              key={notice.id}
-              onPress={() => handleNoticeClick(selectedCategory, notice.id)}
-            ></Pressable>
-          )
-        )}
       </View>
     </>
   );

@@ -11,7 +11,7 @@ export async function getNormalNotice(
     const uuid: string = await getOrCreateUUID();
 
     const response = await axios.get(
-      `${BASE_URL}/api/normal?ssaid=${uuid}&page=${page}`
+      `${BASE_URL}api/normal?ssaid=${uuid}&page=${page}`
     );
 
     if (response.status === 200) {
@@ -34,7 +34,7 @@ export async function getAcademicNotice(
     const uuid: string = await getOrCreateUUID();
 
     const response = await axios.get(
-      `${BASE_URL}/api/academic?ssaid=${uuid}&page=${page}`
+      `${BASE_URL}api/academic?ssaid=${uuid}&page=${page}`
     );
 
     if (response.status === 200) {
@@ -57,7 +57,7 @@ export async function getEventNotice(
     const uuid: string = await getOrCreateUUID();
 
     const response = await axios.get(
-      `${BASE_URL}/api/event?ssaid=${uuid}&page=${page}`
+      `${BASE_URL}api/event?ssaid=${uuid}&page=${page}`
     );
 
     if (response.status === 200) {
@@ -80,7 +80,7 @@ export async function getScholarshipNotice(
     const uuid: string = await getOrCreateUUID();
 
     const response = await axios.get(
-      `${BASE_URL}/api/scholarship?ssaid=${uuid}&page=${page}`
+      `${BASE_URL}api/scholarship?ssaid=${uuid}&page=${page}`
     );
 
     if (response.status === 200) {
@@ -103,7 +103,7 @@ export async function getCareerNotice(
     const uuid: string = await getOrCreateUUID();
 
     const response = await axios.get(
-      `${BASE_URL}/api/career?ssaid=${uuid}&page=${page}`
+      `${BASE_URL}api/career?ssaid=${uuid}&page=${page}`
     );
 
     if (response.status === 200) {
@@ -126,7 +126,7 @@ export async function getStudentActsNotice(
     const uuid: string = await getOrCreateUUID();
 
     const response = await axios.get(
-      `${BASE_URL}/api/student-acts?ssaid=${uuid}&page=${page}`
+      `${BASE_URL}api/student-acts?ssaid=${uuid}&page=${page}`
     );
 
     if (response.status === 200) {
@@ -149,7 +149,7 @@ export async function getBiddingNotice(
     const uuid: string = await getOrCreateUUID();
 
     const response = await axios.get(
-      `${BASE_URL}/api/bidding?ssaid=${uuid}&page=${page}`
+      `${BASE_URL}api/bidding?ssaid=${uuid}&page=${page}`
     );
 
     if (response.status === 200) {
@@ -172,7 +172,7 @@ export async function getSafetyNotice(
     const uuid: string = await getOrCreateUUID();
 
     const response = await axios.get(
-      `${BASE_URL}/api/safety?ssaid=${uuid}&page=${page}`
+      `${BASE_URL}api/safety?ssaid=${uuid}&page=${page}`
     );
 
     if (response.status === 200) {
@@ -195,7 +195,7 @@ export async function getRevisionNotice(
     const uuid: string = await getOrCreateUUID();
 
     const response = await axios.get(
-      `${BASE_URL}/api/revision?ssaid=${uuid}&page=${page}`
+      `${BASE_URL}api/revision?ssaid=${uuid}&page=${page}`
     );
 
     if (response.status === 200) {
@@ -219,7 +219,7 @@ export async function getDormitoryNotice(
     const uuid: string = await getOrCreateUUID();
 
     const response = await axios.get(
-      `${BASE_URL}/api/dormitory/notices?ssaid=${uuid}&page=${page}&campus=${campus}`
+      `${BASE_URL}api/dormitory/notices?ssaid=${uuid}&page=${page}&campus=${campus}`
     );
 
     if (response.status === 200) {
@@ -243,7 +243,7 @@ export async function getDormitoryEntryNotice(
     const uuid: string = await getOrCreateUUID();
 
     const response = await axios.get(
-      `${BASE_URL}/api/dormitory/entry-notices?ssaid=${uuid}&page=${page}&campus=${campus}`
+      `${BASE_URL}api/dormitory/entry-notices?ssaid=${uuid}&page=${page}&campus=${campus}`
     );
 
     if (response.status === 200) {
@@ -267,7 +267,7 @@ export async function getLibraryNotice(
     const uuid: string = await getOrCreateUUID();
 
     const response = await axios.get(
-      `${BASE_URL}/api/library?ssaid=${uuid}&page=${page}&campus=${campus}`
+      `${BASE_URL}api/library?ssaid=${uuid}&page=${page}&campus=${campus}`
     );
 
     if (response.status === 200) {
@@ -290,7 +290,7 @@ export async function getTeachingNotice(
     const uuid: string = await getOrCreateUUID();
 
     const response = await axios.get(
-      `${BASE_URL}/api/teaching?ssaid=${uuid}&page=${page}`
+      `${BASE_URL}api/teaching?ssaid=${uuid}&page=${page}`
     );
 
     if (response.status === 200) {

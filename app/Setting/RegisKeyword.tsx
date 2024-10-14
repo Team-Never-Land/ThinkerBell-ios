@@ -12,11 +12,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TextInput } from "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import KeywordBox from "@/components/setting/KeywordBox";
+import { saveKeyword } from "@/service/keyword/saveKeyword"; // API 호출 함수 임포트
+import { getKeywords } from "@/service/keyword/getKeywords";
 
 export default function RegisKeyword({ navigation }: { navigation: any }) {
   const { top } = useSafeAreaInsets();
   const [input, setInput] = useState<string>(""); // 입력 필드 상태
   const [errorMessage, setErrorMessage] = useState("");
+  const [keywords, setKeywords] = useState<string[]>([]);
   const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(false); // 버튼 비활성화 상태
 
   const isValidSearch = (text: string) => {
@@ -26,26 +29,22 @@ export default function RegisKeyword({ navigation }: { navigation: any }) {
     return validText.test(text);
   };
 
-  // 버튼 비활성화 상태 관리 함수
-  const checkKeywordCount = async () => {
+  const fetchKeywords = async () => {
     try {
-      const storedKeywords = await AsyncStorage.getItem("keywords");
-      const keywordsArray = storedKeywords ? JSON.parse(storedKeywords) : [];
-      if (keywordsArray.length >= 9) {
-        setIsButtonDisabled(true); // 9개 이상일 경우 버튼 비활성화
-      } else {
-        setIsButtonDisabled(false);
-      }
+      const keywordList = await getKeywords(); // 서버에서 키워드 불러오기
+      console.log("불러온 키워드:", keywordList); // 불러온 데이터 확인
+      setKeywords(keywordList); // 상태 업데이트
+      setIsButtonDisabled(keywordList.length >= 9); // 키워드가 9개 이상일 경우 버튼 비활성화
     } catch (error) {
-      console.error("키워드 개수 확인 오류:", error);
+      console.error("키워드 불러오기 오류:", error);
     }
   };
 
   useEffect(() => {
-    checkKeywordCount(); // 컴포넌트가 마운트될 때 키워드 개수 확인
+    fetchKeywords(); // 컴포넌트가 마운트될 때 키워드 불러오기
   }, []);
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (input.length < 2) {
       setErrorMessage("두 글자 이상 입력해주세요.");
     } else if (!isValidSearch(input)) {
@@ -53,36 +52,28 @@ export default function RegisKeyword({ navigation }: { navigation: any }) {
     } else {
       setErrorMessage("");
       Keyboard.dismiss();
-      storeKeyword(input);
+      await storeKeyword(input); // 키워드 저장
     }
   };
 
-  // 키워드를 AsyncStorage에 저장하는 함수
   const storeKeyword = async (keyword: string) => {
     try {
-      const existingKeywords = await AsyncStorage.getItem("keywords");
-      const keywordsArray = existingKeywords
-        ? JSON.parse(existingKeywords)
-        : [];
-
-      if (!keywordsArray.includes(keyword)) {
-        if (keywordsArray.length < 9) {
-          keywordsArray.push(keyword);
-          await AsyncStorage.setItem("keywords", JSON.stringify(keywordsArray));
-          console.log("키워드 저장 완료:", keywordsArray);
-          checkKeywordCount(); // 키워드 개수 다시 체크
-          navigation.goBack();
-        } else {
-          setErrorMessage("최대 9개까지 등록할 수 있습니다.");
-        }
+      await saveKeyword(keyword); // 서버에 키워드 저장
+      await fetchKeywords(); // 저장 후 키워드 목록 다시 불러오기
+      navigation.goBack(); // 저장 후 이전 화면으로 이동
+    } catch (error: any) {
+      if (error.response && error.response.status === 400) {
+        setErrorMessage("잘못된 입력값입니다.");
+      } else if (error.response && error.response.status === 500) {
+        setErrorMessage("서버 오류가 발생했습니다. 나중에 다시 시도해주세요.");
       } else {
-        setErrorMessage("이미 등록된 키워드입니다.");
+        setErrorMessage("키워드 저장 중 오류가 발생했습니다.");
       }
-    } catch (error) {
-      console.error("키워드 저장 오류:", error);
     }
   };
-
+  const handleKeywordSelect = (selectedKeyword: string) => {
+    setInput(selectedKeyword); // Show the selected keyword in the input field
+  };
   return (
     <>
       <View style={{ height: top, backgroundColor: Color.WHITE }}></View>
@@ -161,15 +152,42 @@ export default function RegisKeyword({ navigation }: { navigation: any }) {
             }}
           >
             {/* 추천 키워드를 클릭했을 때 키워드가 저장됨 */}
-            <KeywordBox keyword="등록금" />
-            <KeywordBox keyword="입사신청" />
-            <KeywordBox keyword="수강신청" />
-            <KeywordBox keyword="계절수업" />
-            <KeywordBox keyword="교환학생" />
-            <KeywordBox keyword="장학금" />
-            <KeywordBox keyword="학점교류" />
-            <KeywordBox keyword="교직이수" />
-            <KeywordBox keyword="공모전" />
+            <KeywordBox
+              keyword="등록금"
+              onKeywordSelect={handleKeywordSelect}
+            />
+            <KeywordBox
+              keyword="입사신청"
+              onKeywordSelect={handleKeywordSelect}
+            />
+            <KeywordBox
+              keyword="수강신청"
+              onKeywordSelect={handleKeywordSelect}
+            />
+            <KeywordBox
+              keyword="계절수업"
+              onKeywordSelect={handleKeywordSelect}
+            />
+            <KeywordBox
+              keyword="교환학생"
+              onKeywordSelect={handleKeywordSelect}
+            />
+            <KeywordBox
+              keyword="장학금"
+              onKeywordSelect={handleKeywordSelect}
+            />
+            <KeywordBox
+              keyword="학점교류"
+              onKeywordSelect={handleKeywordSelect}
+            />
+            <KeywordBox
+              keyword="교직이수"
+              onKeywordSelect={handleKeywordSelect}
+            />
+            <KeywordBox
+              keyword="공모전"
+              onKeywordSelect={handleKeywordSelect}
+            />
           </View>
         </View>
 

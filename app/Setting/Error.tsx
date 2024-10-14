@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Color, Font } from "@/constants/Theme";
 import SettingUsableHeader from "@/components/header/SettingUsableHeader";
 import Toast from "react-native-toast-message";
+import { submitErrorMessage } from "@/service/submitErrorMessage";
 
 export default function Error({ navigation }: { navigation: any }) {
   const title = "오류신고";
@@ -19,14 +20,27 @@ export default function Error({ navigation }: { navigation: any }) {
   };
 
   // 신고 내용 제출
-  const handleSubmit = () => {
-    Toast.show({
-      type: "success",
-      text1: "신고되었습니다!",
-      position: "bottom",
-    });
-    setErrorText(""); // 입력 필드 초기화
-    console.log(errorText);
+  const handleSubmit = async () => {
+    try {
+      // 서버에 신고 내용 전송
+      await submitErrorMessage(errorText);
+
+      // 성공적으로 전송되면 Toast로 알림 표시
+      Toast.show({
+        type: "success",
+        text1: "신고되었습니다!",
+        position: "bottom",
+      });
+      setErrorText(""); // 입력 필드 초기화
+    } catch (error) {
+      // 전송 실패 시 Toast로 오류 알림
+      Toast.show({
+        type: "error",
+        text1: "신고 실패",
+        text2: "다시 시도해주세요.",
+        position: "bottom",
+      });
+    }
   };
 
   return (

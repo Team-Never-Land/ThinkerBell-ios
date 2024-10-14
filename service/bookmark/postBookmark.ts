@@ -12,7 +12,7 @@ export async function postBookmark(
     const uuid: string = await getOrCreateUUID();
 
     const response = await axios.post(
-      `${BASE_URL}/api/bookmark?ssaid=${uuid}&category=${category}&notice-id=${noticeId}`
+      `${BASE_URL}api/bookmark?ssaid=${uuid}&category=${category}&notice-id=${noticeId}`
     );
 
     if (response.status === 200) {

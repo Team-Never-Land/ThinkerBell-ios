@@ -6,43 +6,20 @@ import { Color, Font } from "@/constants/Theme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TCategoryList } from "@/types/category";
 import { onMarkedPress } from "@/utils/favorites";
+import { NoticeItem } from "@/app/Home/AlarmPage";
+import { getMarkAlarmAsViewed } from "@/service/alarm/getMarkAlarmAsViewed";
 
 export default function AlarmCategoryItem({
   item,
   categoryKey,
   updateList,
 }: {
-  item: TCategoryList;
+  item: NoticeItem;
   categoryKey: string;
   updateList: (id: number) => void;
 }) {
-  const [isViewed, setIsViewed] = useState(item.read);
+  const [isViewed, setIsViewed] = useState(item.viewed);
   const [isMarked, setIsMarked] = useState(item.marked); // 즐겨찾기 상태
-
-  const saveViewedNotice = async (category: string, noticeId: number) => {
-    const storageKey = `${category}_viewed`;
-    let viewedNotices = await getNoticesArray(storageKey);
-
-    if (!viewedNotices.includes(noticeId)) {
-      viewedNotices.push(noticeId);
-      await AsyncStorage.setItem(storageKey, JSON.stringify(viewedNotices));
-    }
-
-    console.log(
-      `공지 ${noticeId} 읽음 상태 저장됨, categoryKey: ${storageKey}, 저장된 공지들: ${viewedNotices.join(
-        ","
-      )}`
-    );
-  };
-  const getNoticesArray = async (key: string) => {
-    try {
-      const existingNotices = await AsyncStorage.getItem(key);
-      return existingNotices ? JSON.parse(existingNotices) : [];
-    } catch (error) {
-      console.error(error);
-      return [];
-    }
-  };
 
   const handleMarkedPress = async (event: any) => {
     event.preventDefault();
@@ -51,22 +28,22 @@ export default function AlarmCategoryItem({
     await onMarkedPress(item.id, categoryKey, currentMarkedStatus, updateList);
   };
 
-  useEffect(() => {
-    const checkIfViewed = async () => {
-      const storageKey = `${categoryKey}_viewed`; // 고유 키로 읽음 상태를 불러옴
-
-      const noticesArray = await getNoticesArray(storageKey);
-      if (Array.isArray(noticesArray)) {
-        setIsViewed(noticesArray.includes(item.id));
-      }
-    };
-    checkIfViewed();
-  }, [categoryKey, item.id]);
+  //
   const handlePress = async () => {
-    await saveViewedNotice(categoryKey, item.id); // 공지를 읽음으로 처리
-    updateList(item.id); // 리스트 업데이트
-    setIsViewed(true);
-    Linking.openURL(item.url);
+    try {
+      // 서버에 알림을 읽음 처리 요청
+      const message = await getMarkAlarmAsViewed(item.id);
+      console.log(`알람 ${item.id} 읽음 처리: ${message}`);
+
+      // 읽음 처리 후 상태 업데이트
+      setIsViewed(true);
+      updateList(item.id); // 리스트 업데이트
+
+      // 알림의 URL을 열기
+      Linking.openURL(item.url);
+    } catch (error) {
+      console.error(`알림 ${item.id} 읽음 처리 중 오류 발생:`, error);
+    }
   };
   return (
     <Pressable
@@ -77,7 +54,6 @@ export default function AlarmCategoryItem({
         justifyContent: "space-between",
         alignItems: "center",
         paddingLeft: 22,
-        backgroundColor: item.important ? Color.category : Color.WHITE,
         borderColor: Color.red.gray[700],
         borderBottomWidth: 1,
       }}
@@ -91,7 +67,6 @@ export default function AlarmCategoryItem({
           paddingVertical: 12,
         }}
       >
-        {item.important && "[중요]  "}
         {item.title}
       </Text>
       <View

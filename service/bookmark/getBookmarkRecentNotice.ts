@@ -9,7 +9,7 @@ export async function getBookmarkRecentNotice(): Promise<TFavoritesRecentNoticeL
     const uuid: string = await getOrCreateUUID();
 
     const response = await axios.get(
-      `${BASE_URL}/api/bookmark/recent-notice?ssaid=${uuid}`
+      `${BASE_URL}api/bookmark/recent-notice?ssaid=${uuid}`
     );
 
     if (response.status === 200) {

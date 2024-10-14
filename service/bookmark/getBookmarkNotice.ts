@@ -9,7 +9,7 @@ export async function getBookmarkNotice(): Promise<TCategorySearchResponse> {
     const uuid: string = await getOrCreateUUID();
 
     const response = await axios.get(
-      `${BASE_URL}/api/bookmark/notice?ssaid=${uuid}`
+      `${BASE_URL}api/bookmark/notice?ssaid=${uuid}`
     );
 
     if (response.status === 200) {

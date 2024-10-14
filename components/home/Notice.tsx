@@ -4,7 +4,9 @@ import { Font, Color } from "@/constants/Theme";
 import { TCategoryList } from "@/types/category";
 import NextIcon from "../../assets/images/icon/Arrow/Next.svg";
 
-export default function Notice({ notices }: { notices: TCategoryList[] }) {
+export default function Notice({ notices }: { notices: any[] }) {
+  console.log("Received notices: ", notices);
+
   const formatDate = (dateString: string) => {
     const [year, month, day] = dateString.split("-");
     return `${month}.${day}`; // MM.DD 형태로 반환

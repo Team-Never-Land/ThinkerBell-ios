@@ -36,8 +36,8 @@ export default function KeywordList({
         style={{
           justifyContent: "center", // 세로 가운데 정렬
           alignItems: "center", // 가로 가운데 정렬
-          width: 106, // 텍스트 박스 크기
           height: 30,
+          marginLeft: 30,
         }}
       >
         <Text

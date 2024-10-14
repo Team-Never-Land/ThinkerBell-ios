@@ -8,6 +8,8 @@ import RightArrowIcon from "../../assets/images/icon/Arrow/Next.svg";
 import { Direction } from "react-native-calendars/src/types";
 import { dummyCategorySearch } from "@/assets/data/dummyCategory";
 import AcademicList from "./AcademicList";
+import { getMonthlyAcademicSchedule } from "@/service/getMonthlyAcademicSchedule";
+import { getOrCreateUUID } from "@/utils/uuid-function";
 LocaleConfig.locales["ko"] = {
   monthNames: [
     "1월",
@@ -53,41 +55,44 @@ LocaleConfig.defaultLocale = "ko";
 
 export default function Calendars() {
   const [currentMonth, setCurrentMonth] = useState(""); // 현재 달력에 표시된 월
-  const [filteredNotices, setFilteredNotices] = useState(
-    dummyCategorySearch?.AcademicNotice || []
-  ); // 필터링된 학사 일정 상태
 
-  // 달력의 현재 월을 가져와 필터링하기 위한 함수
-  //   const handleMonthChange = (month: any) => {
-  //     const formattedMonth = `${month.year}-${String(month.month).padStart(
-  //       2,
-  //       "0"
-  //     )}`;
-  //     setCurrentMonth(formattedMonth);
-  //   };
-  const academicNotices = dummyCategorySearch?.AcademicNotice || [];
+  const [filteredNotices, setFilteredNotices] = useState<any[]>([]); // 필터링된 학사 일정 상태
+  const [academicNotices, setAcademicNotices] = useState<any[]>([]); // 학사 일정 전체 데이터 상태
 
-  //   // 해당 월의 학사 일정 필터링
-  //   const filteredNotices = academicNotices.filter((notice) =>
-  //     notice.pubDate.startsWith(currentMonth)
-  //   );
-  // 현재 달에 맞는 학사 일정 필터링
-  const filterAcademicNotices = (month: string) => {
-    const academicNotices = dummyCategorySearch?.AcademicNotice || [];
-    return academicNotices.filter((notice) => notice.pubDate.startsWith(month));
+  // // 현재 달에 맞는 학사 일정 필터링
+  // const filterAcademicNotices = (month: string) => {
+  //   return academicNotices.filter((notice) => {
+  //     const noticeMonth = notice.pubDate.substring(0, 7); // YYYY-MM 형식 추출
+  //     return noticeMonth === month; // 현재 월과 비교
+  //   });
+  // };
+
+  // 현재 달에 맞는 학사 일정 필터링 및 정렬
+  const filterAndSortAcademicNotices = (notices: any[]) => {
+    return notices.sort((a, b) => (a.startDate > b.startDate ? -1 : 1)); // 날짜 기준 내림차순 정렬
   };
-  // 오늘 날짜 기준으로 현재 월을 설정하는 함수
-  const getCurrentMonth = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = (today.getMonth() + 1).toString().padStart(2, "0"); // 월은 0부터 시작하므로 +1
-    return `${year}-${month}`;
+
+  // API에서 학사 일정을 가져오는 함수
+  const fetchAcademicNotices = async (year: number, month: number) => {
+    try {
+      const response = await getMonthlyAcademicSchedule(year, month); // API 호출
+      setAcademicNotices(response); // 전체 데이터를 상태에 저장
+      const filteredData = filterAndSortAcademicNotices(response);
+      setFilteredNotices(filteredData); // 필터링된 학사 일정 설정
+    } catch (error) {
+      console.error("Error fetching academic notices:", error);
+      setAcademicNotices([]);
+      setFilteredNotices([]);
+    }
   };
   useEffect(() => {
-    const initialMonth = getCurrentMonth();
-    setCurrentMonth(initialMonth);
-    setFilteredNotices(filterAcademicNotices(initialMonth)); // 처음 로드 시 필터링
+    const today = new Date();
+    const initialYear = today.getFullYear();
+    const initialMonth = today.getMonth() + 1;
+    setCurrentMonth(`${initialYear}-${String(initialMonth).padStart(2, "0")}`);
+    fetchAcademicNotices(initialYear, initialMonth); // 첫 로드 시 데이터 가져오기
   }, []);
+
   // 달이 변경되었을 때 호출
   const handleMonthChange = (month: any) => {
     const formattedMonth = `${month.year}-${String(month.month).padStart(
@@ -95,7 +100,7 @@ export default function Calendars() {
       "0"
     )}`;
     setCurrentMonth(formattedMonth);
-    setFilteredNotices(filterAcademicNotices(formattedMonth)); // 변경된 달에 맞는 학사 일정 필터링
+    fetchAcademicNotices(month.year, month.month); // 변경된 달에 맞는 학사 일정 필터링
   };
 
   const getKoreanToday = () => {
@@ -108,16 +113,22 @@ export default function Calendars() {
     return `${year}-${month}-${day}`;
   };
 
-  const today = getKoreanToday();
-
   const markedDates = academicNotices.reduce((acc, notice) => {
-    acc[notice.pubDate] = {
-      //추후 수정해야함
-      selected: true,
-      selectedColor: Color.BLUE,
-    };
+    const dateKey = notice.startDate;
+    if (!acc[dateKey]) {
+      acc[dateKey] = {
+        dots: [{ key: `${notice.id}`, color: Color.BLUE }],
+        selected: true,
+        selectedTextColor: Color.BLUE,
+        selectedColor: "transparent",
+      };
+    } else {
+      acc[dateKey].dots.push({ key: `${notice.id}`, color: Color.BLUE });
+    }
     return acc;
-  }, {} as { [key: string]: any });
+  }, {});
+
+  const today = getKoreanToday();
 
   markedDates[today] = {
     marked: true, // 오늘 날짜에 작은 점 표시
@@ -171,7 +182,7 @@ export default function Calendars() {
       </View>
       <AcademicList
         notices={filteredNotices}
-        categoryKey="학사공지"
+        categoryKey="AcademicNotice"
         updateList={(id) => {
           // 공지사항 상태 업데이트
           setFilteredNotices((prev) =>

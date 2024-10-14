@@ -11,7 +11,7 @@ export async function getSearchNotices(
     const uuid: string = await getOrCreateUUID();
 
     const response = await axios.get(
-      `${BASE_URL}/api/notices/search?ssaid=${uuid}&keyword=${keyword}`
+      `${BASE_URL}api/notices/search?ssaid=${uuid}&keyword=${keyword}`
     );
 
     if (response.status === 200) {

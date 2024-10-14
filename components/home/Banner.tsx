@@ -11,45 +11,39 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import { ImageSourcePropType } from "react-native";
 import { Color } from "@/constants/Theme";
+import { getBanners } from "@/service/getBanners";
 
 type BannerItem = {
   id: number;
   title: string;
   url: string;
-  imageUrl: ImageSourcePropType;
+  imageUrl: string;
 };
 
 export default function Banner() {
   const screenWidth = Dimensions.get("window").width;
   const [activeIndex, setActiveIndex] = useState(0); // 현재 페이지 인덱스 상태
   const flatListRef = useRef<FlatList>(null); // FlatList에 접근할 수 있는 ref
+  const [banners, setBanners] = useState([]); // API에서 가져온 배너 데이터를 저장할 상태
 
-  const banners: BannerItem[] = [
-    {
-      id: 1,
-      title: "정기 일정 공지 1",
-      url: "https://www.mju.ac.kr/bbs/mjukr/141/208825/artclView.do",
-      imageUrl: require("../../assets/images/banners/banner1.png"),
-    },
-    {
-      id: 2,
-      title: "정보성 공지 2",
-      url: "https://www.mju.ac.kr/bbs/mjukr/141/190823/artclView.do",
-      imageUrl: require("../../assets/images/banners/banner2.png"),
-    },
-    {
-      id: 3,
-      title: "정기 일정 공지 3",
-      url: "https://www.mju.ac.kr/bbs/mjukr/141/214594/artclView.do",
-      imageUrl: require("../../assets/images/banners/banner3.png"),
-    },
-    {
-      id: 4,
-      title: "이벤트성 공지",
-      url: "https://www.mju.ac.kr/bbs/mjukr/143/212130/artclView.do",
-      imageUrl: require("../../assets/images/banners/banner4.png"),
-    },
-  ];
+  const fetchBannerData = async () => {
+    try {
+      const bannerData = await getBanners();
+      const formattedBanners = bannerData.map((item: any) => ({
+        id: item.id,
+        title: item.title,
+        url: item.noticeUrl,
+        imageUrl: item.s3Url, // 여기서 API의 이미지 URL을 사용
+      }));
+      setBanners(formattedBanners); // 변환된 데이터를 상태에 저장
+    } catch (error) {
+      console.error("배너 데이터를 가져오는 도중 오류 발생:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBannerData(); // 컴포넌트가 처음 렌더링될 때 배너 데이터를 가져옴
+  }, []);
 
   // FlatList에서 스크롤을 감지해 현재 페이지를 업데이트
   const onScroll = (event: any) => {
@@ -64,20 +58,26 @@ export default function Banner() {
       console.error("Failed to open URL:", err)
     );
   };
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      const nextIndex = (activeIndex + 1) % banners.length; // 다음 인덱스 계산
-      flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true }); // FlatList 스크롤
-      setActiveIndex(nextIndex); // 인덱스 업데이트
-    }, 4000);
 
-    return () => clearInterval(intervalId); // 컴포넌트 unmount 시 interval 클리어
-  }, [activeIndex]);
+  useEffect(() => {
+    if (banners.length > 0) {
+      const intervalId = setInterval(() => {
+        const nextIndex = (activeIndex + 1) % banners.length; // 다음 인덱스 계산
+        flatListRef.current?.scrollToIndex({
+          index: nextIndex,
+          animated: true,
+        }); // FlatList 스크롤
+        setActiveIndex(nextIndex); // 인덱스 업데이트
+      }, 4000);
+
+      return () => clearInterval(intervalId); // 컴포넌트 unmount 시 interval 클리어
+    }
+  }, [activeIndex, banners]); // banners 의존성 추가
 
   const renderItem = ({ item }: { item: BannerItem }) => (
     <Pressable onPress={() => handleBannerClick(item.url)}>
       <Image
-        source={item.imageUrl}
+        source={{ uri: item.imageUrl }}
         style={{ height: 132, width: screenWidth }}
       />
     </Pressable>
