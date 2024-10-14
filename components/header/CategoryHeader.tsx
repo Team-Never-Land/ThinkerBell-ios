@@ -64,10 +64,16 @@ export default function CategoryHeader({
           <LogoIcon
             width={36}
             height={28}
-            onPress={() => navigation.navigate("home")}
+            onPress={() => {
+              navigation.navigate("CategoryList");
+              navigation.navigate("home");
+            }}
           />
           <Pressable
-            onPress={() => navigation.navigate("home")}
+            onPress={() => {
+              navigation.navigate("CategoryList");
+              navigation.navigate("home");
+            }}
             style={{
               height: "100%",
               justifyContent: "center",
