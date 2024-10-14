@@ -14,6 +14,7 @@ import LogoIcon from "../../../assets/images/icon/Logo.svg";
 import { dummyCategorySearch } from "@/assets/data/dummyCategory";
 import SearchBar from "@/components/header/SearchBar";
 import { getSearchNotices } from "@/service/getSearchNotices";
+import { useFocusEffect } from "expo-router";
 export default function ResultSearchHeader({
   query,
   handleSearch,
@@ -40,66 +41,49 @@ export default function ResultSearchHeader({
     "장학/장학금": "ScholarshipNotice",
     학생활동: "StudentActsNotice",
   };
-  // // 필터링 수행
-  // const filterNotices = async (category: string, searchText: string) => {
-  //   try {
-  //     const categoryKey = keyMap[category];
-  //     const effectiveSearchText =
-  //       searchText.trim() === "" ? "검색어" : searchText;
-  //     const response = await getSearchNotices(effectiveSearchText); // 검색 API 호출
-  //     const filtered = response.data[categoryKey] || [];
-  //     setFilteredNotices(filtered);
-  //     onFilter(filtered); // 필터링된 결과를 부모 컴포넌트로 전달
-  //   } catch (error) {
-  //     console.error("Error filtering notices:", error);
-  //   }
-  // };
+  const noticeTypeMap: { [key: string]: TCategoryKey } = {
+    학사: "AcademicNotice",
+    생활관: "DormitoryNotice",
+    "장학/장학금": "ScholarshipNotice",
+    학생활동: "StudentActsNotice",
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      StatusBar.setBarStyle("light-content");
+
+      return () => {};
+    }, [])
+  );
 
   const handleCategorySelect = async (category: string) => {
     setSelectedCategory(category);
 
     try {
-      // API 호출을 통해 검색어와 선택된 카테고리에 맞는 데이터를 가져옴
-      console.log("Searching with keyword:", search);
+      // 선택된 카테고리의 noticeType을 가져옴
+      const noticeType = noticeTypeMap[category];
+      console.log(`Searching with keyword: ${search}, category: ${noticeType}`);
 
-      const response = await getSearchNotices(search);
+      const response = await getSearchNotices(search, noticeType); // API 호출 시 noticeType 전달
+
       const categoryKey = keyMap[category]; // 선택된 카테고리의 키 가져오기
 
       // 서버 응답에 해당 카테고리 데이터가 있으면 상태 업데이트
       if (response.data[categoryKey]) {
         setFilteredNotices(response.data[categoryKey]); // 필터링된 공지 상태 업데이트
+        onSearchComplete(response.data[categoryKey]);
       } else {
         setFilteredNotices([]); // 데이터가 없으면 빈 배열로 설정
+        onSearchComplete([]);
       }
     } catch (error) {
       console.error("Error fetching search results:", error);
-      setFilteredNotices([]); // 오류 발생 시 빈 배열 설정
+      onSearchComplete([]); // 오류 발생 시 빈 배열 설정
     }
   };
-
   const onSearchSubmit = () => {
     handleCategorySelect(selectedCategory); // 검색어와 선택된 카테고리에 따른 필터링 실행
   };
-
-  // const handleCategorySelect = async (category: string) => {
-  //   setSelectedCategory(category);
-
-  //   try {
-  //     // 카테고리에 따라 API 호출
-  //     const response = await getSearchNotices(search);
-  //     const categoryKey = keyMap[category]; // 선택된 카테고리의 키 가져오기
-
-  //     // 서버 응답에 해당 카테고리 데이터가 있으면 onSearchComplete에 전달
-  //     if (response.data[categoryKey]) {
-  //       onSearchComplete(response.data[categoryKey]); // 검색 결과를 SearchResultPage로 전달
-  //     } else {
-  //       onSearchComplete([]); // 해당 카테고리에 대한 데이터가 없을 경우 빈 배열 전달
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching search results:", error);
-  //     onSearchComplete([]); // 오류 발생 시 빈 배열 전달
-  //   }
-  // };
 
   return (
     <>

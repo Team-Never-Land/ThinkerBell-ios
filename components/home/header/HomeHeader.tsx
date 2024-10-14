@@ -27,6 +27,7 @@ import {
   getCareerNotice,
 } from "@/service/getNotice";
 import { getCheckAllUnreadAlarms } from "@/service/alarm/getCheckAllUnreadAlarms";
+import { useFocusEffect } from "expo-router";
 
 export default function HomeHeader({
   navigation,
@@ -89,8 +90,6 @@ export default function HomeHeader({
         const initialNotices = await getNormalNotice(1);
         if (initialNotices && Array.isArray(initialNotices)) {
           setCategoryNotices(initialNotices);
-        } else {
-          setCategoryNotices([]); // 초기 데이터가 없으면 빈 배열로 설정
         }
       } catch (error) {
         console.error("Error fetching initial notices:", error);
@@ -110,6 +109,14 @@ export default function HomeHeader({
     const interval = setInterval(checkUnreadAlarms, 60000); // 60초마다 체크
     return () => clearInterval(interval); // 컴포넌트 언마운트 시 인터벌 해제
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      StatusBar.setBarStyle("light-content");
+
+      return () => {};
+    }, [])
+  );
 
   return (
     <>
@@ -232,7 +239,7 @@ export default function HomeHeader({
                 navigation.navigate("CategoryList");
               }} // 카테고리 페이지로 이동
             >
-              <MenuIcon fill={Color.Grey[1]} />
+              <MenuIcon color={Color.Grey[1]} />
             </Pressable>
           </ScrollView>
         </View>

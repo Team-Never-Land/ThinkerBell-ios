@@ -5,13 +5,14 @@ import { TCategorySearchResponse } from "@/types/category";
 
 //공지 카테고리 별 검색 및 반환
 export async function getSearchNotices(
-  keyword: string
+  keyword: string,
+  noticeType: string
 ): Promise<TCategorySearchResponse> {
   try {
     const uuid: string = await getOrCreateUUID();
-
+    console.log("uuid 값:", uuid);
     const response = await axios.get(
-      `${BASE_URL}api/notices/search?ssaid=${uuid}&keyword=${keyword}`
+      `${BASE_URL}api/notices/search?ssaid=${uuid}&keyword=${keyword}&noticeType=${noticeType}`
     );
 
     if (response.status === 200) {

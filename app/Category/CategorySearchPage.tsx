@@ -133,7 +133,11 @@ const CategorySearchPage = ({ navigation }: { navigation: any }) => {
     setIsLoading(true);
 
     try {
-      const response = await getSearchNotices(search);
+      console.log(`검색어: ${search}, 카테고리: ${categoryKey}`);
+
+      const response = await getSearchNotices(search, categoryKey);
+      console.log("Response Data:", response.data);
+
       if (response.data[categoryKey]) {
         if (
           categoryKey === "DormitoryNotice" ||

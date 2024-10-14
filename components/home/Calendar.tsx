@@ -59,14 +59,6 @@ export default function Calendars() {
   const [filteredNotices, setFilteredNotices] = useState<any[]>([]); // 필터링된 학사 일정 상태
   const [academicNotices, setAcademicNotices] = useState<any[]>([]); // 학사 일정 전체 데이터 상태
 
-  // // 현재 달에 맞는 학사 일정 필터링
-  // const filterAcademicNotices = (month: string) => {
-  //   return academicNotices.filter((notice) => {
-  //     const noticeMonth = notice.pubDate.substring(0, 7); // YYYY-MM 형식 추출
-  //     return noticeMonth === month; // 현재 월과 비교
-  //   });
-  // };
-
   // 현재 달에 맞는 학사 일정 필터링 및 정렬
   const filterAndSortAcademicNotices = (notices: any[]) => {
     return notices.sort((a, b) => (a.startDate > b.startDate ? -1 : 1)); // 날짜 기준 내림차순 정렬
@@ -182,7 +174,7 @@ export default function Calendars() {
       </View>
       <AcademicList
         notices={filteredNotices}
-        categoryKey="AcademicNotice"
+        categoryKey="AcademicSchedule"
         updateList={(id) => {
           // 공지사항 상태 업데이트
           setFilteredNotices((prev) =>

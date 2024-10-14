@@ -74,6 +74,16 @@ export function Settings({ navigation }: { navigation: any }) {
       console.error("최소 업데이트 필요 버전 조회 오류:", error);
     }
   };
+  const handleTermsOfServicePress = () => {
+    Linking.openURL(
+      "https://petite-pest-f69.notion.site/56313d788d914d6e8e996e099694272e"
+    ); // 이용약관 링크로 이동
+  };
+  const handlePrivatePolicyPress = () => {
+    Linking.openURL(
+      "https://petite-pest-f69.notion.site/022b7a19351a418da5cf22304c7c3137"
+    ); // 이용약관 링크로 이동
+  };
   useEffect(() => {
     loadNotificationStatus(); // 알림 상태 불러오기
     loadKeywords(); // 키워드 목록 불러오기
@@ -239,8 +249,7 @@ export function Settings({ navigation }: { navigation: any }) {
           top: 512,
           position: "absolute",
         }}
-
-        //onPress={() => navigation.navigate("Keyword")}
+        onPress={handleTermsOfServicePress}
       >
         <Text
           style={{
@@ -263,6 +272,7 @@ export function Settings({ navigation }: { navigation: any }) {
           top: 561,
           position: "absolute",
         }}
+        onPress={handlePrivatePolicyPress}
       >
         <Text
           style={{

@@ -22,11 +22,11 @@ export default function SearchResultPage() {
   const [loading, setLoading] = useState<boolean>(false); // 로딩 상태 관리
 
   const updateList = (id: number) => {
-    // 공지 목록을 업데이트하는 로직 (예: 읽음 상태 변경)
-    const updatedNotices = filteredNotices.map((item) =>
-      item.id === id ? { ...item, read: !item.read } : item
+    setFilteredNotices((prevNotices) =>
+      prevNotices.map((item) =>
+        item.id === id ? { ...item, marked: !item.marked } : item
+      )
     );
-    setFilteredNotices(updatedNotices); // 업데이트된 공지 목록을 저장
   };
 
   const handleSearch = (newSearch: string) => {
@@ -34,14 +34,6 @@ export default function SearchResultPage() {
     saveSearchHistory(newSearch); // 검색어를 저장
   };
 
-  // const handleFilterNotices = (filtered: TCategoryList[]) => {
-  //   if (query.trim() === "") {
-  //     // 검색어가 없을 때는 빈 배열로 설정
-  //     setFilteredNotices([]);
-  //   } else {
-  //     setFilteredNotices(filtered);
-  //   }
-  // };
   // 새로운 검색어를 저장하는 함수
   const saveSearchHistory = async (newSearch: string) => {
     try {

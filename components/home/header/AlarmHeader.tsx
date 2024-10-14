@@ -12,6 +12,7 @@ import { getNoticesByKeyword } from "@/service/alarm/getNoticesByKeyword";
 import CategoryItem from "@/components/category/CategoryItem";
 import AlarmCategoryItem from "../AlarmCategoryItem";
 import { getCheckUnreadAlarmByKeyword } from "@/service/alarm/getCheckUnreadAlarmByKeyword";
+import { useFocusEffect } from "expo-router";
 
 // NoticeItem 타입 정의
 type NoticeItem = {
@@ -122,6 +123,13 @@ export default function AlarmHeader({
   //   const data = await response.json();
   //   console.log("푸시 알림 응답:", data);
   // }
+  useFocusEffect(
+    React.useCallback(() => {
+      StatusBar.setBarStyle("light-content");
+
+      return () => {};
+    }, [])
+  );
 
   return (
     <>
