@@ -7,9 +7,8 @@ import { TFavoritesScheduleListResponse } from "@/types/favorites";
 export async function getBookmarkRecentSchedule(): Promise<TFavoritesScheduleListResponse> {
   try {
     const uuid: string = await getOrCreateUUID();
-
     const response = await axios.get(
-      `${BASE_URL}/api/bookmark/recent-schedule?ssaid=${uuid}`
+      `${BASE_URL}api/bookmark/recent-schedule?ssaid=${uuid}`
     );
 
     if (response.status === 200) {

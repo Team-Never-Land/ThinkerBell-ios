@@ -7,84 +7,61 @@ import AlarmCategoryItem from "@/components/home/AlarmCategoryItem";
 import { useNavigation } from "expo-router";
 import { Color, Font } from "@/constants/Theme";
 import { NativeStackNavigationProp } from "react-native-screens/lib/typescript/native-stack/types";
-
-export default function AlarmPage({}: {}) {
+import { getKeywords } from "@/service/keyword/getKeywords";
+export type NoticeItem = {
+  id: number;
+  title: string;
+  noticeTypeKorean: string;
+  noticeTypeEnglish: string;
+  pubDate: string;
+  viewed: boolean;
+  url: string;
+  marked: boolean;
+};
+export default function AlarmPage() {
   const navigation = useNavigation();
 
-  const [filteredNotices, setFilteredNotices] = useState<TCategoryList[]>([]); // 필터링된 공지사항
-  const [hasUnreadNotices, setHasUnreadNotices] = useState<boolean>(false); // 읽지 않은 공지가 있는지
-  const [unreadCount, setUnreadCount] = useState<number>(0); // 읽지 않은 공지 개수
+  const [filteredNotices, setFilteredNotices] = useState<NoticeItem[]>([]); // 필터링된 공지사항
   const [categoryName, setCategoryName] = useState<string>(""); // 카테고리 이름
+  const [unreadKeywords, setUnreadKeywords] = useState<{
+    [key: string]: boolean;
+  }>({});
   const [keywords, setKeywords] = useState<string[]>([]); // 키워드 상태 관리
-
-  const loadKeywords = async () => {
-    try {
-      const storedKeywords = await AsyncStorage.getItem("keywords");
-      const parsedKeywords = storedKeywords ? JSON.parse(storedKeywords) : [];
-      setKeywords(parsedKeywords);
-    } catch (error) {
-      console.error("키워드 불러오기 오류:", error);
-    }
-  };
 
   useEffect(() => {
     loadKeywords();
   }, []);
 
-  const getViewedNotices = async (category: string) => {
-    const storageKey = `${category}_viewed`;
-    const existingNotices = await AsyncStorage.getItem(storageKey);
-    console.log(`불러온 읽음 상태: ${existingNotices}`); // 로그 추가
-
-    return existingNotices ? JSON.parse(existingNotices) : [];
+  const loadKeywords = async () => {
+    try {
+      const keywordList = await getKeywords(); // API로부터 키워드 목록 불러오기
+      setKeywords(keywordList); // 키워드 상태에 저장
+    } catch (error) {
+      console.error("키워드 불러오기 오류:", error);
+    }
   };
 
-  const checkUnreadNotices = (notices: TCategoryList[], category: string) => {
-    const unreadNotices = notices.filter((notice) => !notice.read); // read: false인 공지 필터링
-    setUnreadCount(unreadNotices.length); // 읽지 않은 공지 개수 설정
-    const hasUnread = unreadNotices.length > 0;
-
-    setHasUnreadNotices(hasUnread);
-    return hasUnread; // 읽지 않은 공지가 있는지 여부 반환
+  const updateUnreadStatus = (newUnreadStatus: { [key: string]: boolean }) => {
+    setUnreadKeywords(newUnreadStatus); // 키워드별로 읽지 않은 상태 업데이트
   };
-
-  const handleFilterNotices = async (
-    notices: TCategoryList[],
-    category: string
-  ) => {
-    setCategoryName(category); // 카테고리 이름 저장
-    const viewedNotices = await getViewedNotices(category);
-    // 각 공지의 읽음 상태 적용
-    const updatedNotices = notices.map((notice) => ({
-      ...notice,
-      read: viewedNotices.includes(notice.id),
-    }));
-
-    setFilteredNotices(updatedNotices); // 필터링된 공지사항 업데이트
-    checkUnreadNotices(updatedNotices, category); // 읽지 않은 공지 여부 체크
+  const handleFilterNotices = (notices: NoticeItem[]) => {
+    setFilteredNotices(notices);
   };
 
   const handleUpdateList = (id: number) => {
-    setFilteredNotices((prev) =>
-      prev.map((notice) =>
-        notice.id === id ? { ...notice, read: true } : notice
-      )
+    const updatedNotices = filteredNotices.map((notice) =>
+      notice.id === id ? { ...notice, viewed: true } : notice
     );
+    setFilteredNotices(updatedNotices);
 
-    const updateOriginalNotices = async () => {
-      const key = `${categoryName}_viewed`; // 카테고리 이름 기반으로 읽음 상태 저장
-      const existingNotices = await AsyncStorage.getItem(key);
-      let parsedNotices = existingNotices ? JSON.parse(existingNotices) : [];
-
-      if (!parsedNotices.includes(id)) {
-        parsedNotices.push(id);
-      }
-
-      await AsyncStorage.setItem(key, JSON.stringify(parsedNotices));
-      checkUnreadNotices(filteredNotices, categoryName);
-    };
-
-    updateOriginalNotices();
+    // 모든 공지가 읽혔는지 확인
+    const allRead = updatedNotices.every((notice) => notice.viewed);
+    if (allRead) {
+      // 읽지 않은 공지가 없으면 해당 키워드의 빨간 점 제거
+      const updatedUnreadStatus = { ...unreadKeywords };
+      updatedUnreadStatus["keyword"] = false; // 현재 카테고리 키워드에 대해 빨간 점 제거
+      setUnreadKeywords(updatedUnreadStatus);
+    }
   };
 
   // 모든 카테고리에서 읽지 않은 공지를 확인하는 함수
@@ -94,6 +71,7 @@ export default function AlarmPage({}: {}) {
       <AlarmHeader
         onFilterNotices={handleFilterNotices} // 필터링된 공지사항을 헤더에서 전달
         navigation={navigation}
+        updateUnreadStatus={updateUnreadStatus}
       />
       {keywords.length === 0 ? (
         <View
@@ -151,18 +129,18 @@ export default function AlarmPage({}: {}) {
         </View>
       ) : (
         <FlatList
-          style={{
-            marginBottom: 65,
-          }}
-          data={filteredNotices}
-          keyExtractor={(item) => item.id.toString()}
+          style={{ marginBottom: 65 }}
+          data={filteredNotices} // 필터링된 공지사항 데이터
+          keyExtractor={(item) => item.id.toString()} // 각 항목의 고유 키 설정
           renderItem={({ item }) => (
             <AlarmCategoryItem
-              item={item}
+              item={item} // 각각의 공지사항 항목 전달
               categoryKey="keyword"
-              updateList={handleUpdateList}
+              updateList={handleUpdateList} // 업데이트 함수 전달
             />
           )}
+          showsVerticalScrollIndicator={false} // 스크롤바 숨김 (선택사항)
+          contentContainerStyle={{ paddingBottom: 20 }} // 추가 패딩으로 마지막 항목 간격 유지
         />
       )}
     </View>

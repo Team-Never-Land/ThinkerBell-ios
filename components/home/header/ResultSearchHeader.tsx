@@ -13,16 +13,20 @@ import { Color, Font } from "@/constants/Theme";
 import LogoIcon from "../../../assets/images/icon/Logo.svg";
 import { dummyCategorySearch } from "@/assets/data/dummyCategory";
 import SearchBar from "@/components/header/SearchBar";
+import { getSearchNotices } from "@/service/getSearchNotices";
+import { useFocusEffect } from "expo-router";
 export default function ResultSearchHeader({
   query,
   handleSearch,
-  onFilter,
+  //onFilter,
   navigation,
+  onSearchComplete,
 }: {
   query: string;
   handleSearch: (search: string) => void;
-  onFilter: (filteredNotices: TCategoryList[]) => void; // 필터링된 공지를 전달하는 콜백 함수
+  //onFilter: (filteredNotices: TCategoryList[]) => void; // 필터링된 공지를 전달하는 콜백 함수
   navigation: any;
+  onSearchComplete: (data: any) => void;
 }) {
   const { top } = useSafeAreaInsets();
 
@@ -37,32 +41,48 @@ export default function ResultSearchHeader({
     "장학/장학금": "ScholarshipNotice",
     학생활동: "StudentActsNotice",
   };
-  // 필터링 수행
-  const filterNotices = (category: string, searchText: string) => {
-    const categoryKey = keyMap[category];
-    const categoryNotices = dummyCategorySearch[categoryKey] || [];
-    const effectiveSearchText =
-      searchText.trim() === "" ? "검색어" : searchText;
-
-    // 검색어에 해당하는 공지 필터링
-    const filtered = categoryNotices.filter((notice) =>
-      notice.title.includes(effectiveSearchText)
-    );
-    setFilteredNotices(filtered);
-    onFilter(filtered); // 필터링된 결과를 부모 컴포넌트로 전달
+  const noticeTypeMap: { [key: string]: TCategoryKey } = {
+    학사: "AcademicNotice",
+    생활관: "DormitoryNotice",
+    "장학/장학금": "ScholarshipNotice",
+    학생활동: "StudentActsNotice",
   };
 
-  useEffect(() => {
-    filterNotices(selectedCategory, search);
-  }, [selectedCategory, search]); // 카테고리 또는 검색어가 변경될 때 필터링 실행
+  useFocusEffect(
+    React.useCallback(() => {
+      StatusBar.setBarStyle("light-content");
 
-  const handleCategorySelect = (category: string) => {
-    setSelectedCategory(category); // 카테고리 설정만 변경하고, 필터링은 useEffect에서 처리
+      return () => {};
+    }, [])
+  );
+
+  const handleCategorySelect = async (category: string) => {
+    setSelectedCategory(category);
+
+    try {
+      // 선택된 카테고리의 noticeType을 가져옴
+      const noticeType = noticeTypeMap[category];
+      console.log(`Searching with keyword: ${search}, category: ${noticeType}`);
+
+      const response = await getSearchNotices(search, noticeType); // API 호출 시 noticeType 전달
+
+      const categoryKey = keyMap[category]; // 선택된 카테고리의 키 가져오기
+
+      // 서버 응답에 해당 카테고리 데이터가 있으면 상태 업데이트
+      if (response.data[categoryKey]) {
+        setFilteredNotices(response.data[categoryKey]); // 필터링된 공지 상태 업데이트
+        onSearchComplete(response.data[categoryKey]);
+      } else {
+        setFilteredNotices([]); // 데이터가 없으면 빈 배열로 설정
+        onSearchComplete([]);
+      }
+    } catch (error) {
+      console.error("Error fetching search results:", error);
+      onSearchComplete([]); // 오류 발생 시 빈 배열 설정
+    }
   };
-
   const onSearchSubmit = () => {
-    handleSearch(search); // 검색어 저장
-    filterNotices(selectedCategory, search); // 검색어 제출 시 필터링
+    handleCategorySelect(selectedCategory); // 검색어와 선택된 카테고리에 따른 필터링 실행
   };
 
   return (

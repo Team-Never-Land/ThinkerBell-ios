@@ -9,55 +9,85 @@ import SwitchOffIcon from "@/assets/images/icon/Switch/Switch-Off.svg";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Keyword from "../../app/Setting/Keyword";
 import RegisKeyword from "../../app/Setting/RegisKeyword";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
 import KeywordBox from "@/components/setting/KeywordBox";
 import Error from "../Setting/Error";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
+import { getKeywords } from "@/service/keyword/getKeywords";
+import { toggleAlarmStatus } from "@/service/alarm/toggleAlarmStatus";
+import { getAlarmStatus } from "@/service/alarm/getAlarmStatus";
+import { getMinimumVersion } from "@/service/update/getMinimumVersion";
 
 export function Settings({ navigation }: { navigation: any }) {
   const [keywords, setKeywords] = useState<string[]>([]);
   const [isNotificationEnabled, setIsNotificationEnabled] =
     useState<boolean>(false);
   const [isLatestVersion, setIsLatestVersion] = useState<boolean>(true); // 최신 버전 여부 상태
+  const [latestVersion, setLatestVersion] = useState<string>("1.1.0"); // 최신 버전 상태
+
   const currentVersion = "1.0.0"; // 현재 앱 버전
-  const latestVersion = "1.1.0"; // 최신 버전, 서버에서 가져온다고 가정
-
-  // useEffect(() => {
-  //   // 버전 체크 로직 (여기서는 최신 버전이 아닌 경우를 가정)
-  //   if (currentVersion !== latestVersion) {
-  //     setIsLatestVersion(false);
-  //   }
-
-  //   loadKeywords();
-  // }, []);
 
   const loadKeywords = async () => {
     try {
-      const storedKeywords = await AsyncStorage.getItem("keywords");
-      const keywordsArray = storedKeywords ? JSON.parse(storedKeywords) : [];
-      setKeywords(keywordsArray);
+      const keywordList = await getKeywords(); // API 호출
+      const extractedKeywords = keywordList.map(
+        (item: { keyword: string }) => item.keyword
+      );
+      setKeywords(extractedKeywords); // 키워드 상태 업데이트
     } catch (error) {
       console.error("키워드 불러오기 오류:", error);
     }
   };
-  const version = "1.0.0";
-  // 알림 설정 상태 변경 시 AsyncStorage에 저장
+
+  const loadNotificationStatus = async () => {
+    try {
+      const alarmStatus = await getAlarmStatus(); // 작성한 getAlarmStatus 함수 호출
+      setIsNotificationEnabled(alarmStatus); // 알림 상태 업데이트
+      console.log("Current Notification Status:", alarmStatus); // 알림 상태 로그 출력
+    } catch (error) {
+      console.error("알림 상태 불러오기 오류:", error);
+    }
+  };
   const toggleNotification = async () => {
     const newValue = !isNotificationEnabled; // 상태 반전
     setIsNotificationEnabled(newValue);
+
     try {
-      await AsyncStorage.setItem("notificationEnabled", newValue.toString());
-      console.log(newValue);
+      // 서버로 상태 변경 요청
+      await toggleAlarmStatus(); // 알림 상태 토글
+      console.log("Notification status:", newValue);
     } catch (error) {
-      console.error("알림 설정 저장 오류:", error);
+      console.error("알림 상태 변경 오류:", error);
+      setIsNotificationEnabled(!newValue); // 실패 시 상태 롤백
     }
   };
+
   const handleUpdatePress = () => {
     Linking.openURL("https://apps.apple.com/app/id123456789"); // 스토어 URL로 이동
   };
-
+  const checkVersionUpdate = async () => {
+    try {
+      const minimumVersion = await getMinimumVersion();
+      setLatestVersion(minimumVersion.versionName); // 서버에서 받아온 최신 버전 설정
+      setIsLatestVersion(currentVersion >= minimumVersion.versionName); // 버전 비교
+    } catch (error) {
+      console.error("최소 업데이트 필요 버전 조회 오류:", error);
+    }
+  };
+  const handleTermsOfServicePress = () => {
+    Linking.openURL(
+      "https://petite-pest-f69.notion.site/56313d788d914d6e8e996e099694272e"
+    ); // 이용약관 링크로 이동
+  };
+  const handlePrivatePolicyPress = () => {
+    Linking.openURL(
+      "https://petite-pest-f69.notion.site/022b7a19351a418da5cf22304c7c3137"
+    ); // 이용약관 링크로 이동
+  };
   useEffect(() => {
-    loadKeywords();
+    loadNotificationStatus(); // 알림 상태 불러오기
+    loadKeywords(); // 키워드 목록 불러오기
+    checkVersionUpdate();
   }, []);
 
   return (
@@ -105,7 +135,7 @@ export function Settings({ navigation }: { navigation: any }) {
           }}
         >
           {keywords.map((keyword, index) => (
-            <KeywordBox key={index} keyword={keyword} disablePress={true} />
+            <KeywordBox key={index} keyword={keyword} />
           ))}
         </ScrollView>
       </View>
@@ -219,8 +249,7 @@ export function Settings({ navigation }: { navigation: any }) {
           top: 512,
           position: "absolute",
         }}
-
-        //onPress={() => navigation.navigate("Keyword")}
+        onPress={handleTermsOfServicePress}
       >
         <Text
           style={{
@@ -243,8 +272,7 @@ export function Settings({ navigation }: { navigation: any }) {
           top: 561,
           position: "absolute",
         }}
-
-        //onPress={() => navigation.navigate("Keyword")}
+        onPress={handlePrivatePolicyPress}
       >
         <Text
           style={{

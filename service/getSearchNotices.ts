@@ -10,9 +10,9 @@ export async function getSearchNotices(
 ): Promise<TCategorySearchResponse> {
   try {
     const uuid: string = await getOrCreateUUID();
-
+    console.log("uuid 값:", uuid);
     const response = await axios.get(
-      `${BASE_URL}/api/notices/search?ssaid=${uuid}&keyword=${keyword}&noticeType=${noticeType}`
+      `${BASE_URL}api/notices/search?ssaid=${uuid}&keyword=${keyword}&noticeType=${noticeType}`
     );
 
     if (response.status === 200) {

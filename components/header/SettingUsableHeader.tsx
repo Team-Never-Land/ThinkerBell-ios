@@ -3,6 +3,7 @@ import { View, Text, StatusBar } from "react-native";
 import LogoIcon from "@/assets/images/icon/Logo.svg";
 import { Color, Font } from "@/constants/Theme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useFocusEffect } from "expo-router";
 
 export default function SettingUsableHeader({
   navigation,
@@ -14,6 +15,19 @@ export default function SettingUsableHeader({
   disablePress: boolean;
 }) {
   const { top } = useSafeAreaInsets();
+  useFocusEffect(
+    React.useCallback(() => {
+      StatusBar.setBarStyle("light-content");
+
+      return () => {};
+    }, [])
+  );
+  const handleLogoPress = () => {
+    navigation.goBack(); // 한 단계 뒤로 이동
+    setTimeout(() => {
+      navigation.navigate("HomeMain"); // 그 다음 HomeMain으로 이동
+    }, 0); // goBack 호출 후 navigate를 호출
+  };
 
   return (
     <>
@@ -32,7 +46,7 @@ export default function SettingUsableHeader({
             <LogoIcon
               width={28}
               height={22}
-              onPress={() => navigation.navigate("HomeMain")}
+              onPress={handleLogoPress} // goBack 호출 후 navigate를 호출}
             />
           )}
         </View>

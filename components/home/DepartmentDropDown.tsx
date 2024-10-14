@@ -4,70 +4,89 @@ import {
   TouchableOpacity,
   FlatList,
   StyleSheet,
-  Modal,
+  ActivityIndicator,
 } from "react-native";
-import React, { useState } from "react";
-import { dummyDepartment } from "@/assets/data/dummyDepartment";
+import React, { useEffect, useState } from "react";
 import { Color, Font } from "@/constants/Theme";
 import DownIcon from "@/assets/images/icon/Arrow/Down2.svg";
 import UpIcon from "@/assets/images/icon/Arrow/Up2.svg";
 import CallDialog from "./CallDialog";
+import { getDepartmentContacts } from "@/service/getDepartmentContacts";
 
 type DepartmentType = {
-  id: number;
-  name: string;
-  phone: string;
+  campus: string;
+  major: string;
+  college: string;
+  contact: string;
 };
 
 export default function DepartmentDropDown() {
-  const [selectedCampus, setSelectedCampus] = useState<number | null>(null); // 선택된 캠퍼스
-  const [selectedSubCategory, setSelectedSubCategory] = useState<number | null>(
-    null
-  ); // 선택된 하위 카테고리
-  const [expanded, setExpanded] = useState<boolean>(false); // 드롭다운 상태
+  const [departmentData, setDepartmentData] = useState<DepartmentType[]>([]);
+  const [selectedCampus, setSelectedCampus] = useState<string | null>(null);
+  const [selectedCollege, setSelectedCollege] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [expanded, setExpanded] = useState<boolean>(false);
   const [selectedDepartment, setSelectedDepartment] = useState<{
     department: DepartmentType;
-    categoryName: string;
-  } | null>(null); // 선택된 학과와 상위 카테고리
-  const [isDialogVisible, setDialogVisible] = useState(false); // 다이얼로그 표시 여부
+  } | null>(null);
+  const [isDialogVisible, setDialogVisible] = useState(false);
 
-  const toggleDropdown = (campusId: number) => {
-    setSelectedCampus(campusId === selectedCampus ? null : campusId);
-    setExpanded(campusId === selectedCampus ? false : true);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getDepartmentContacts();
+        setDepartmentData(data.data);
+      } catch (error) {
+        console.error("Error fetching department contacts:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const toggleDropdown = (campus: string) => {
+    setSelectedCampus(campus === selectedCampus ? null : campus);
+    setExpanded(campus === selectedCampus ? false : true);
   };
 
-  const toggleSubDropdown = (subCategoryId: number) => {
-    setSelectedSubCategory(
-      subCategoryId === selectedSubCategory ? null : subCategoryId
-    );
+  const toggleCollegeDropdown = (college: string) => {
+    setSelectedCollege(college === selectedCollege ? null : college);
   };
 
-  // 학과 선택 시 다이얼로그 표시 함수
-  const handleDepartmentSelect = (
-    department: DepartmentType,
-    categoryName: string
-  ) => {
-    setSelectedDepartment({ department, categoryName }); // 선택된 학과 설정
-    setDialogVisible(true); // 다이얼로그 표시
+  const handleDepartmentSelect = (department: DepartmentType) => {
+    setSelectedDepartment({ department });
+    setDialogVisible(true);
   };
+
+  if (isLoading) {
+    return <ActivityIndicator size="large" color={Color.BLUE} />;
+  }
+
+  const campuses = [...new Set(departmentData.map((item) => item.campus))];
 
   return (
-    <View>
-      {/* Campus Dropdown */}
-      {dummyDepartment.campuses.map((campus) => (
-        <View key={campus.id}>
+    <FlatList
+      style={{
+        marginBottom: 70,
+      }}
+      data={campuses}
+      keyExtractor={(item) => item}
+      renderItem={({ item: campus }) => (
+        <View>
           <TouchableOpacity
             style={[
               styles.dropdownButton,
-              expanded && selectedCampus === campus.id
+              expanded && selectedCampus === campus
                 ? styles.dropdownButtonHover
                 : {},
             ]}
-            onPress={() => toggleDropdown(campus.id)}
+            onPress={() => toggleDropdown(campus)}
           >
-            <Text style={styles.dropdownText}>{campus.name}</Text>
+            <Text style={styles.dropdownText}>{campus}</Text>
             <View>
-              {expanded && selectedCampus === campus.id ? (
+              {expanded && selectedCampus === campus ? (
                 <UpIcon color={Color.red.gray[500]} />
               ) : (
                 <DownIcon color={Color.red.gray[500]} />
@@ -75,23 +94,30 @@ export default function DepartmentDropDown() {
             </View>
           </TouchableOpacity>
 
-          {/* SubCategory Dropdown */}
-          {selectedCampus === campus.id && expanded && (
-            <View>
-              {campus.subCategories.map((subCategory) => (
-                <View key={subCategory.id}>
+          {selectedCampus === campus && expanded && (
+            <FlatList
+              data={[
+                ...new Set(
+                  departmentData
+                    .filter((item) => item.campus === campus)
+                    .map((item) => item.college)
+                ),
+              ]}
+              keyExtractor={(item) => item}
+              renderItem={({ item: college }) => (
+                <View>
                   <TouchableOpacity
                     style={[
                       styles.dropdownButton,
-                      selectedSubCategory === subCategory.id
+                      selectedCollege === college
                         ? styles.dropdownButtonHover
                         : {},
                     ]}
-                    onPress={() => toggleSubDropdown(subCategory.id)}
+                    onPress={() => toggleCollegeDropdown(college)}
                   >
-                    <Text style={styles.dropdownText}>{subCategory.name}</Text>
+                    <Text style={styles.dropdownText}>{college}</Text>
                     <View>
-                      {selectedSubCategory === subCategory.id ? (
+                      {selectedCollege === college ? (
                         <UpIcon color={Color.red.gray[500]} />
                       ) : (
                         <DownIcon color={Color.red.gray[500]} />
@@ -99,44 +125,43 @@ export default function DepartmentDropDown() {
                     </View>
                   </TouchableOpacity>
 
-                  {/* Department List */}
-                  {selectedSubCategory === subCategory.id && (
+                  {selectedCollege === college && (
                     <FlatList
-                      data={subCategory.departments}
-                      keyExtractor={(item) => item.id.toString()}
+                      data={departmentData.filter(
+                        (item) =>
+                          item.college === college && item.campus === campus
+                      )}
+                      keyExtractor={(item) => item.major}
                       renderItem={({ item }) => (
                         <TouchableOpacity
                           style={styles.departmentItem}
-                          onPress={() =>
-                            handleDepartmentSelect(item, subCategory.name)
-                          } // 학과 선택 시 다이얼로그 표시
+                          onPress={() => handleDepartmentSelect(item)}
                         >
-                          <Text style={styles.departmentText}>{item.name}</Text>
+                          <Text
+                            style={styles.departmentText}
+                            numberOfLines={1} // 한 줄로 제한
+                            ellipsizeMode="tail" // 텍스트가 넘치면 끝에 ... 표시
+                          >
+                            {item.major}
+                          </Text>
+
                           <Text style={styles.departmentPhone}>
-                            {item.phone}
+                            {item.contact}
                           </Text>
                         </TouchableOpacity>
                       )}
+                      nestedScrollEnabled={true} // 중첩 스크롤 가능하게 설정
                     />
                   )}
                 </View>
-              ))}
-            </View>
+              )}
+              nestedScrollEnabled={true} // 중첩 스크롤 가능하게 설정
+            />
           )}
         </View>
-      ))}
-
-      {/* ContactDialog 표시 */}
-      {selectedDepartment && (
-        <CallDialog
-          visible={isDialogVisible}
-          categoryName={selectedDepartment.categoryName} // 상위 카테고리 이름 전달
-          name={selectedDepartment.department.name} // 학과 이름 전달
-          phone={selectedDepartment.department.phone} // 전화번호 전달
-          onClose={() => setDialogVisible(false)}
-        />
       )}
-    </View>
+      nestedScrollEnabled={true} // 중첩 스크롤 가능하게 설정
+    />
   );
 }
 
@@ -170,6 +195,7 @@ const styles = StyleSheet.create({
   },
   departmentText: {
     ...Font.Paragraph.Medium,
+    width: 220,
   },
   departmentPhone: {
     fontFamily: "Pretendard",

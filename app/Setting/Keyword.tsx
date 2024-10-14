@@ -5,45 +5,45 @@ import KeywordList from "@/components/setting/KeywordList";
 import { Color, Font } from "@/constants/Theme";
 import AddIcon from "@/assets/images/icon/Element/Add.svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getKeywords } from "@/service/keyword/getKeywords";
+import { deleteKeyword } from "@/service/keyword/deleteKeyword";
 
 export default function Keyword({ navigation }: { navigation: any }) {
   const title = "키워드 관리";
   const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(false);
   const [keywords, setKeywords] = useState<string[]>([]);
 
-  // AsyncStorage에서 키워드 개수 확인
-  const checkKeywordCount = async () => {
-    try {
-      const storedKeywords = await AsyncStorage.getItem("keywords");
-      const parsedKeywords = storedKeywords ? JSON.parse(storedKeywords) : [];
-      if (parsedKeywords.length >= 9) {
-        setIsButtonDisabled(true); // 키워드가 9개 이상이면 버튼 비활성화
-      } else {
-        setIsButtonDisabled(false);
-      }
-    } catch (error) {
-      console.error("키워드 개수 확인 오류:", error);
-    }
-  };
-  // AsyncStorage에서 키워드 불러오기
   const loadKeywords = async () => {
-    const storedKeywords = await AsyncStorage.getItem("keywords");
-    if (storedKeywords) {
-      setKeywords(JSON.parse(storedKeywords));
+    try {
+      const keywordList = await getKeywords(); // 서버에서 키워드 불러오기
+      console.log("불러온 키워드:", keywordList); // 불러온 데이터 확인
+
+      // Assuming the API response is an array of objects with { keyword: 'some_keyword' }
+      const keywordsArray = keywordList.map((item: any) => item.keyword); // Extract 'keyword' from each object
+
+      setKeywords(keywordsArray);
+      setIsButtonDisabled(keywordsArray.length >= 9); // 키워드가 9개 이상이면 버튼 비활성화
+    } catch (error) {
+      console.error("키워드 불러오기 오류:", error);
     }
   };
+
   const handleDelete = async (keywordToDelete: string) => {
-    const updatedKeywords = keywords.filter(
-      (keyword) => keyword !== keywordToDelete
-    );
-    setKeywords(updatedKeywords); // 상태 업데이트
-    await AsyncStorage.setItem("keywords", JSON.stringify(updatedKeywords)); // AsyncStorage 업데이트
-    checkKeywordCount(); // 키워드 삭제 후 개수 다시 확인
+    try {
+      await deleteKeyword(keywordToDelete); // 서버에서 키워드 삭제
+      const updatedKeywords = keywords.filter(
+        (keyword) => keyword !== keywordToDelete
+      );
+      setKeywords(updatedKeywords); // 삭제 후 키워드 상태 업데이트
+      setIsButtonDisabled(updatedKeywords.length >= 9); // 버튼 비활성화 상태 업데이트
+    } catch (error) {
+      console.error("키워드 삭제 오류:", error);
+    }
   };
+
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       loadKeywords();
-      checkKeywordCount();
     });
     return unsubscribe;
   }, [navigation]);

@@ -1,10 +1,10 @@
 import "react-native-get-random-values";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import uuid from "react-native-uuid"; // v4를 사용하기 위해 uuid 모듈 사용
+import uuid from "react-native-uuid";
 
 export async function getOrCreateUUID() {
   try {
-    console.log("Attempting to retrieve UUID from AsyncStorage...");
+    //console.log("Attempting to retrieve UUID from AsyncStorage...");
 
     // AsyncStorage에서 UUID 가져오기
     let storedUUID = await AsyncStorage.getItem("device-uuid");
@@ -18,15 +18,15 @@ export async function getOrCreateUUID() {
 
       // AsyncStorage에 저장
       await AsyncStorage.setItem("device-uuid", stringUUID);
-      console.log("UUID saved to AsyncStorage");
+      //console.log("UUID saved to AsyncStorage");
       storedUUID = stringUUID;
     } else {
-      console.log("UUID found in AsyncStorage:", storedUUID);
+      //console.log("UUID found in AsyncStorage:", storedUUID);
     }
 
     return storedUUID;
   } catch (error) {
     console.error("Error while getting or creating UUID:", error);
-    throw error; // 오류 발생 시 호출부에서 처리할 수 있도록 던짐
+    throw error;
   }
 }

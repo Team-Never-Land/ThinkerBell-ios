@@ -9,7 +9,7 @@ export async function getBookmarkSchedule(): Promise<TFavoritesScheduleListRespo
     const uuid: string = await getOrCreateUUID();
 
     const response = await axios.get(
-      `${BASE_URL}/api/bookmark/schedule?ssaid=${uuid}`
+      `${BASE_URL}api/bookmark/schedule?ssaid=${uuid}`
     );
 
     if (response.status === 200) {
@@ -18,8 +18,11 @@ export async function getBookmarkSchedule(): Promise<TFavoritesScheduleListRespo
     } else {
       throw new Error(`Unexpected response status: ${response.status}`);
     }
-  } catch (error) {
-    console.error("Failed to save device info:", error);
+  } catch (error: any) {
+    console.error(
+      "Failed to save device info:",
+      error.message || error.response?.data || error
+    );
     throw error;
   }
 }

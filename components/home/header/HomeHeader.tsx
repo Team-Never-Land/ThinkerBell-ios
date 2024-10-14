@@ -19,43 +19,105 @@ import LogoIcon from "@/assets/images/icon/Logo.svg";
 import { dummyCategorySearch } from "@/assets/data/dummyCategory"; // 더미 데이터 가져오기
 import { TCategoryKey, TCategoryList, TCategorySearch } from "@/types/category";
 import { ScrollView } from "react-native-gesture-handler";
+import {
+  getNormalNotice,
+  getAcademicNotice,
+  getEventNotice,
+  getScholarshipNotice,
+  getCareerNotice,
+} from "@/service/getNotice";
+import { getCheckAllUnreadAlarms } from "@/service/alarm/getCheckAllUnreadAlarms";
+import { useFocusEffect } from "expo-router";
 
 export default function HomeHeader({
   navigation,
   setCategoryNotices,
-  hasUnreadNotices,
 }: {
   navigation: any;
-  setCategoryNotices: React.Dispatch<React.SetStateAction<TCategoryList[]>>;
-  hasUnreadNotices: boolean;
+  setCategoryNotices: React.Dispatch<React.SetStateAction<any[]>>; // TCategoryList[] 대신 any[]
 }) {
   const categories = ["일반", "행사", "학사", "장학", "취업"];
   const { top } = useSafeAreaInsets();
   const [selectedCategory, setSelectedCategory] = useState<string>("일반"); // 선택된 카테고리 상태
+  const [hasUnreadNotices, setHasUnreadNotices] = useState<boolean>(false); // 미확인 알람 여부 상태
 
-  const keyMap: { [key: string]: TCategoryKey } = {
-    일반: "NormalNotice",
-    행사: "EventNotice",
-    학사: "AcademicNotice",
-    장학: "ScholarshipNotice",
-    취업: "CareerNotice",
+  const checkUnreadAlarms = async () => {
+    try {
+      const hasUnread = await getCheckAllUnreadAlarms(); // API 호출
+      setHasUnreadNotices(hasUnread); // 미확인 알람 상태 업데이트
+    } catch (error) {
+      console.error("Error checking unread alarms:", error);
+    }
   };
-
-  const handleCategorySelect = (category: string) => {
+  const handleCategorySelect = async (category: string) => {
     setSelectedCategory(category);
-    const categoryKey: TCategoryKey = keyMap[category]; // keyMap에서 카테고리 키 추출
-    const notices = dummyCategorySearch[categoryKey]?.slice(0, 3) || []; // 해당 카테고리의 최신 3개의 공지 가져오기
-    setCategoryNotices(notices);
+    let notices;
+
+    try {
+      if (category === "일반") {
+        notices = await getNormalNotice(0);
+      } else if (category === "행사") {
+        notices = await getEventNotice(0);
+      } else if (category === "학사") {
+        notices = await getAcademicNotice(0);
+      } else if (category === "장학") {
+        notices = await getScholarshipNotice(0);
+      } else if (category === "취업") {
+        notices = await getCareerNotice(0);
+      }
+
+      // notices가 배열이 아닐 경우 배열로 변환
+      if (notices && Array.isArray(notices.data.items)) {
+        const sortedNotices = notices.data.items.sort((a, b) => {
+          const dateA = new Date(a.pubDate);
+          const dateB = new Date(b.pubDate);
+          return dateB.getTime() - dateA.getTime(); // 최신 순으로 정렬
+        });
+
+        setCategoryNotices(sortedNotices.slice(0, 3)); // 상위 3개의 공지사항만 표시
+      } else {
+        setCategoryNotices([]); // 빈 배열로 초기화
+      }
+    } catch (error) {
+      console.error("Error fetching notices:", error);
+      setCategoryNotices([]); // 오류 발생 시 빈 배열로 설정
+    }
   };
+
   useEffect(() => {
-    const initialNotices =
-      dummyCategorySearch["NormalNotice"]?.slice(0, 3) || [];
-    setCategoryNotices(initialNotices);
+    const initialFetch = async () => {
+      try {
+        const initialNotices = await getNormalNotice(1);
+        if (initialNotices && Array.isArray(initialNotices)) {
+          setCategoryNotices(initialNotices);
+        }
+      } catch (error) {
+        console.error("Error fetching initial notices:", error);
+        setCategoryNotices([]); // 오류 발생 시 빈 배열로 설정
+      }
+    };
+    initialFetch();
+  }, [setCategoryNotices]);
+
+  useEffect(() => {
+    handleCategorySelect("일반");
   }, []);
+
   // hasUnreadNotices 값이 변경될 때마다 로그 출력
   useEffect(() => {
-    console.log("Unread Notices Status(homeheader):", hasUnreadNotices);
-  }, [hasUnreadNotices]);
+    checkUnreadAlarms();
+    const interval = setInterval(checkUnreadAlarms, 60000); // 60초마다 체크
+    return () => clearInterval(interval); // 컴포넌트 언마운트 시 인터벌 해제
+  }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      StatusBar.setBarStyle("light-content");
+
+      return () => {};
+    }, [])
+  );
+
   return (
     <>
       {/* Safe Area Inset */}
@@ -177,7 +239,7 @@ export default function HomeHeader({
                 navigation.navigate("CategoryList");
               }} // 카테고리 페이지로 이동
             >
-              <MenuIcon fill={Color.Grey[1]} />
+              <MenuIcon color={Color.Grey[1]} />
             </Pressable>
           </ScrollView>
         </View>
