@@ -133,7 +133,7 @@ const CategorySearchPage = ({ navigation }: { navigation: any }) => {
     setIsLoading(true);
 
     try {
-      const response = await getSearchNotices(search);
+      const response = await getSearchNotices(search, categoryKey);
       if (response.data[categoryKey]) {
         if (
           categoryKey === "DormitoryNotice" ||
